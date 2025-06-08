@@ -45,11 +45,7 @@ A social feed where users can share their pujo moments — post photos, videos, 
 
 ## 🤝 Contribution
 
-We welcome contributions to enhance PujoGallery! To contribute:
-
-1. Fork the repository.
-2. Create a new branch for your feature or bug fix.
-3. Submit a pull request with a detailed description of your changes.
+Feel free to fork this repository, raise issues, or submit pull requests to add features or improve the design.
 
 ## 📜 License
 
