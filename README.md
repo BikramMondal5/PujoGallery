@@ -17,47 +17,53 @@ A social feed where users can share their pujo moments — post photos, videos, 
 - **Icons**: Lucide-react
 - **State Management**: React Hooks
 
----
-
 ## ⚙️ Installation
 
-1. Clone the repository:
+To set up PujoGallery locally, follow these steps:
+
+1. **Clone the Repository**:
+   Open your terminal and run the following command to clone the repository:
    ```bash
    git clone https://github.com/your-username/PujoGallery.git
    ```
-2. Navigate to the project directory:
+
+2. **Navigate to the Project Directory**:
+   Move into the project folder:
    ```bash
    cd PujoGallery
    ```
-3. Install dependencies:
+
+3. **Install Dependencies**:
+   Install the required packages using pnpm:
    ```bash
-   npm install
+   pnpm install
    ```
-   Or,
-   If you face package installation issue 
-   ```bash
-   npm install --legacy-peer-deps
-   ```
-    
+
+---
 
 ## 🚀 How to Use
 
-1. Start the server:
-   - For developer mode
+To start using PujoGallery, follow these steps:
+
+1. **Start the Development Server**:
+   Run the following command to start the development server:
    ```bash
-   npm run dev
+   pnpm dev
    ```
-   - For production
-   First build the application
-   ```bash
-   npm run build
+
+2. **Access the Application**:
+   Open your browser and navigate to:
    ```
-   Then start the production server
-   ```bash
-   npm start
+   http://localhost:3000
    ```
-2. Open your browser and navigate to `http://localhost:3000`.
-3. Explore the platform and share your Puja moments!
+
+3. **Explore the Platform**:
+   - Create posts with text, images, or videos.
+   - Engage with trending hashtags.
+   - Connect with suggested users.
+   - Interact with posts by liking, commenting, and sharing.
+
+Enjoy sharing your Puja moments and connecting with the community!
 
 ## 🤝 Contribution
 
