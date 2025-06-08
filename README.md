@@ -31,14 +31,30 @@ A social feed where users can share their pujo moments — post photos, videos, 
    ```
 3. Install dependencies:
    ```bash
-   pnpm install
+   npm install
    ```
+   Or,
+   If you face package installation issue 
+   ```bash
+   npm install --legacy-peer-deps
+   ```
+    
 
 ## 🚀 How to Use
 
-1. Start the development server:
+1. Start the server:
+  - For developer mode
    ```bash
-   pnpm dev
+   npm run dev
+   ```
+  - For production
+   # First build the application
+   ```bash
+   npm run build
+   ```
+   # Then start the production server
+   ```bash
+   npm start
    ```
 2. Open your browser and navigate to `http://localhost:3000`.
 3. Explore the platform and share your Puja moments!
