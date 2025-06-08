@@ -97,7 +97,7 @@ export default function PujoGallery() {
           <div className="rounded-xl border bg-white p-4 shadow-sm">
             <div className="flex gap-3">
               <Avatar>
-                <AvatarImage src="" alt="User" />
+                <AvatarImage src="cat.jpeg" alt="User" />
                 <AvatarFallback>A</AvatarFallback>
               </Avatar>
               <div className="flex-1">
