@@ -43,11 +43,11 @@ A social feed where users can share their pujo moments — post photos, videos, 
 ## 🚀 How to Use
 
 1. Start the server:
-  - For developer mode
+   - For developer mode
    ```bash
    npm run dev
    ```
-  - For production
+   - For production
    First build the application
    ```bash
    npm run build
