@@ -48,11 +48,11 @@ A social feed where users can share their pujo moments — post photos, videos, 
    npm run dev
    ```
   - For production
-   # First build the application
+   First build the application
    ```bash
    npm run build
    ```
-   # Then start the production server
+   Then start the production server
    ```bash
    npm start
    ```
