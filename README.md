@@ -1,4 +1,4 @@
-# 🔱🖼️ PujoGallery
+# 🔱🖼️ PujoGallery - Share Your Pujo Moments
 
 A social feed where users can share their pujo moments — post photos, videos, and thoughts, connect with others, react, comment, and celebrate the festival together
 
