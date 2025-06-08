@@ -97,8 +97,8 @@ export default function PujoGallery() {
           <div className="rounded-xl border bg-white p-4 shadow-sm">
             <div className="flex gap-3">
               <Avatar>
-                <AvatarImage src="c:\Users\BIKRAM\Downloads\Hackers.png" alt="User" />
-                <AvatarFallback>U</AvatarFallback>
+                <AvatarImage src="" alt="User" />
+                <AvatarFallback>A</AvatarFallback>
               </Avatar>
               <div className="flex-1">
                 <Textarea
@@ -146,7 +146,7 @@ export default function PujoGallery() {
             <PostCard
               user={{
                 name: "Akash Dutta",
-                image: "Hackers.png",
+                image: "hacker.jfif",
                 verified: false,
               }}
               timestamp="5 hours ago"

@@ -5,9 +5,9 @@ import { BadgeCheck } from "lucide-react"
 
 export function SuggestedUsers() {
   const users = [
-    { name: "Aditya Ghosh", image: "/placeholder.svg", verified: true },
-    { name: "Meera Chatterjee", image: "/placeholder.svg", verified: false },
-    { name: "Vikram Sen", image: "/placeholder.svg", verified: false },
+    { name: "Aditya Ghosh", image: "image1.avif", verified: true },
+    { name: "Meera Chatterjee", image: "meera.jpg", verified: false },
+    { name: "Bikram Mondal", image: "my-image.jfif", verified: false },
   ]
 
   return (
