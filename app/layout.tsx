@@ -1,10 +1,11 @@
 import type { Metadata } from 'next'
+import { PostProvider } from '@/context/PostContext'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Pujo Gallery',
-  description: 'Created with v0',
-  generator: 'v0.dev',
+  title: 'PujoGallery - Share Your Pujo Moments',
+  description: 'A social feed where users can share their pujo moments',
+  generator: 'Next.js',
 }
 
 export default function RootLayout({
@@ -14,7 +15,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <PostProvider>
+          {children}
+        </PostProvider>
+      </body>
     </html>
   )
 }

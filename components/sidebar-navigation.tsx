@@ -1,24 +1,58 @@
 "use client"
 
 import React, { useState, useRef } from "react"
-import { Home, ImageIcon, MessageCircle, Search, User, X } from "lucide-react"
+import { Home, ImageIcon, MessageCircle, Search, Settings, ThumbsUp, TrendingUp, User, X, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Drawer, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from "@/components/ui/drawer"
+import { cn } from "@/lib/utils"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
 import { usePosts } from "@/context/PostContext"
 import { toast } from "@/hooks/use-toast"
+import { useMediaQuery } from "@/hooks/use-mobile"
 
-export function MobileNavigation() {
-  const [isCreatePostOpen, setIsCreatePostOpen] = useState(false)
+interface NavItem {
+  icon: React.ReactNode
+  label: string
+  active?: boolean
+}
+
+export function SidebarNavigation() {
+  const [activeItem, setActiveItem] = useState("Home")
+  const [isCreatePostDialogOpen, setIsCreatePostDialogOpen] = useState(false)
   const [postText, setPostText] = useState("")
   const [mediaPreview, setMediaPreview] = useState<string | null>(null)
   const [mediaType, setMediaType] = useState<"image" | "video" | null>(null)
   const { addPost, uploadImage, uploadVideo, isUploading } = usePosts()
+  const isTablet = useMediaQuery("(max-width: 1024px)")
   
   const fileInputRef = useRef<HTMLInputElement>(null)
   const videoInputRef = useRef<HTMLInputElement>(null)
+  
+  const navItems: NavItem[] = [
+    { icon: <Home className="h-5 w-5" />, label: "Home" },
+    { icon: <Search className="h-5 w-5" />, label: "Explore" },
+    { icon: <ImageIcon className="h-5 w-5" />, label: "Create Post" },
+    { icon: <TrendingUp className="h-5 w-5" />, label: "Trending" },
+    { icon: <User className="h-5 w-5" />, label: "My Posts" },
+    { icon: <ThumbsUp className="h-5 w-5" />, label: "Saved" },
+    { icon: <Settings className="h-5 w-5" />, label: "Settings" },
+  ]
+  
+  const handleNavItemClick = (label: string) => {
+    setActiveItem(label)
+    
+    if (label === "Create Post") {
+      setIsCreatePostDialogOpen(true)
+    } else {
+      toast({
+        title: `${label} view activated`,
+        description: `You are now viewing the ${label} section`,
+        duration: 2000,
+      })
+    }
+  }
   
   const handleImageClick = () => {
     fileInputRef.current?.click()
@@ -83,11 +117,12 @@ export function MobileNavigation() {
       ...(mediaType === "video" && mediaPreview ? { video: mediaPreview } : {}),
     })
     
-    // Reset form and close drawer
+    // Reset form and close dialog
     setPostText("")
     setMediaPreview(null)
     setMediaType(null)
-    setIsCreatePostOpen(false)
+    setIsCreatePostDialogOpen(false)
+    setActiveItem("Home") // Navigate back to home after posting
     
     toast({
       title: "Post created!",
@@ -97,40 +132,35 @@ export function MobileNavigation() {
 
   return (
     <>
-      <div className="fixed bottom-0 left-0 right-0 z-50 flex h-16 items-center justify-around border-t bg-white md:hidden">
-        <Button variant="ghost" size="icon" className="flex flex-col items-center justify-center">
-          <Home className="h-5 w-5" />
-          <span className="mt-1 text-[10px]">Home</span>
-        </Button>
-        <Button variant="ghost" size="icon" className="flex flex-col items-center justify-center">
-          <Search className="h-5 w-5" />
-          <span className="mt-1 text-[10px]">Search</span>
-        </Button>
-        <Button
-          size="icon"
-          className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-[#c62828] to-[#f9a825] text-white shadow-lg"
-          onClick={() => setIsCreatePostOpen(true)}
-        >
-          <ImageIcon className="h-6 w-6" />
-          <span className="sr-only">Create Post</span>
-        </Button>
-        <Button variant="ghost" size="icon" className="flex flex-col items-center justify-center">
-          <MessageCircle className="h-5 w-5" />
-          <span className="mt-1 text-[10px]">Messages</span>
-        </Button>
-        <Button variant="ghost" size="icon" className="flex flex-col items-center justify-center">
-          <User className="h-5 w-5" />
-          <span className="mt-1 text-[10px]">Profile</span>
-        </Button>
-      </div>
-
-      {/* Mobile Create Post Drawer */}
-      <Drawer open={isCreatePostOpen} onOpenChange={setIsCreatePostOpen}>
-        <DrawerContent>
-          <DrawerHeader>
-            <DrawerTitle>Create Post</DrawerTitle>
-          </DrawerHeader>
-          <div className="p-4">
+      <aside
+        className={cn(
+          "sticky top-20 hidden h-[calc(100vh-5rem)] w-56 flex-col gap-1 self-start md:flex",
+          isTablet && "w-14",
+        )}
+      >
+        {navItems.map((item) => (
+          <Button 
+            key={item.label}
+            variant={activeItem === item.label ? "default" : "ghost"} 
+            className={cn(
+              "justify-start gap-3",
+              activeItem === item.label && "bg-[#c62828] hover:bg-[#b71c1c]"
+            )}
+            onClick={() => handleNavItemClick(item.label)}
+          >
+            {item.icon}
+            {!isTablet && <span>{item.label}</span>}
+          </Button>
+        ))}
+      </aside>
+      
+      {/* Create Post Dialog */}
+      <Dialog open={isCreatePostDialogOpen} onOpenChange={setIsCreatePostDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Create New Post</DialogTitle>
+          </DialogHeader>
+          <div className="mt-4">
             <div className="flex gap-3">
               <Avatar>
                 <AvatarImage src="hacker.jfif" alt="User" />
@@ -139,7 +169,7 @@ export function MobileNavigation() {
               <div className="flex-1">
                 <Textarea
                   placeholder="Share your Puja moment..."
-                  className="min-h-[100px] resize-none border-none p-0 focus-visible:ring-0"
+                  className="min-h-[120px] resize-none border-none p-0 focus-visible:ring-0"
                   value={postText}
                   onChange={(e) => setPostText(e.target.value)}
                 />
@@ -159,13 +189,13 @@ export function MobileNavigation() {
                       <img 
                         src={mediaPreview} 
                         alt="Selected media" 
-                        className="max-h-[250px] rounded-lg object-cover" 
+                        className="max-h-[300px] rounded-lg object-cover" 
                       />
                     ) : (
                       <video 
                         src={mediaPreview} 
                         controls
-                        className="max-h-[250px] rounded-lg" 
+                        className="max-h-[300px] rounded-lg" 
                       />
                     )}
                   </div>
@@ -188,41 +218,48 @@ export function MobileNavigation() {
                 />
               </div>
             </div>
-          </div>
-          <Separator />
-          <div className="flex items-center justify-between p-4">
-            <div className="flex gap-4">
+            <Separator className="my-4" />
+            <div className="flex items-center justify-between">
+              <div className="flex gap-2">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-gray-500 hover:text-[#c62828]"
+                  onClick={handleImageClick}
+                  disabled={isUploading}
+                >
+                  <ImageIcon className="mr-1 h-4 w-4" />
+                  Image
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-gray-500 hover:text-[#c62828]"
+                  onClick={handleVideoClick}
+                  disabled={isUploading}
+                >
+                  <MessageCircle className="mr-1 h-4 w-4" />
+                  Video
+                </Button>
+              </div>
               <Button 
-                variant="ghost" 
-                size="sm" 
-                className="flex-col items-center text-gray-500"
-                onClick={handleImageClick}
+                className="bg-[#c62828] hover:bg-[#b71c1c]" 
+                disabled={(!postText.trim() && !mediaPreview) || isUploading}
+                onClick={handleCreatePost}
               >
-                <ImageIcon className="h-5 w-5" />
-                <span className="mt-1 text-[10px]">Image</span>
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="flex-col items-center text-gray-500"
-                onClick={handleVideoClick}
-              >
-                <MessageCircle className="h-5 w-5" />
-                <span className="mt-1 text-[10px]">Video</span>
+                {isUploading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Uploading...
+                  </>
+                ) : (
+                  "Post"
+                )}
               </Button>
             </div>
           </div>
-          <DrawerFooter>
-            <Button 
-              className="bg-[#c62828] hover:bg-[#b71c1c]"
-              disabled={(!postText.trim() && !mediaPreview) || isUploading}
-              onClick={handleCreatePost}
-            >
-              {isUploading ? "Uploading..." : "Post"}
-            </Button>
-          </DrawerFooter>
-        </DrawerContent>
-      </Drawer>
+        </DialogContent>
+      </Dialog>
     </>
   )
 }

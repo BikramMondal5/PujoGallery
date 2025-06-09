@@ -48,7 +48,7 @@ To set up PujoGallery locally, follow these steps:
 
 To start using PujoGallery, follow these steps:
 
-1. **Start the Development Server**:
+1. **Start the Server**:
    Run the following command to start the server:
    - For Developer mode
    ```bash
