@@ -273,16 +273,19 @@ export function RichTextEditor({
     checkActiveFormats();
   };
 
+  // Modern purple-blue gradient styling for active buttons
+  const activeButtonStyle = "bg-gradient-to-r from-indigo-500 to-blue-500 text-white hover:from-indigo-600 hover:to-blue-600";
+
   return (
     <div className={`w-full flex flex-col ${className}`}>
-      {/* Toolbar - styled to match your attached image */}
+      {/* Toolbar - styled with purple and blue color scheme */}
       <div className="flex flex-wrap items-center gap-1 rounded-md border bg-gray-50 p-2 mb-2">
         <Button 
-          variant={activeFormats.bold ? "default" : "ghost"}
+          variant="ghost" 
           size="sm" 
           className={cn(
-            "h-8 w-8 p-0",
-            activeFormats.bold && "bg-gray-200"
+            "h-8 w-8 p-0 transition-all duration-200",
+            activeFormats.bold && activeButtonStyle
           )}
           onClick={() => handleFormatting('bold')}
           title="Bold"
@@ -290,11 +293,11 @@ export function RichTextEditor({
           <Bold className="h-4 w-4" />
         </Button>
         <Button 
-          variant={activeFormats.italic ? "default" : "ghost"}
+          variant="ghost" 
           size="sm" 
           className={cn(
-            "h-8 w-8 p-0",
-            activeFormats.italic && "bg-gray-200"
+            "h-8 w-8 p-0 transition-all duration-200",
+            activeFormats.italic && activeButtonStyle
           )}
           onClick={() => handleFormatting('italic')}
           title="Italic"
@@ -302,11 +305,11 @@ export function RichTextEditor({
           <Italic className="h-4 w-4" />
         </Button>
         <Button 
-          variant={activeFormats.unorderedList ? "default" : "ghost"}
+          variant="ghost" 
           size="sm" 
           className={cn(
-            "h-8 w-8 p-0",
-            activeFormats.unorderedList && "bg-gray-200"
+            "h-8 w-8 p-0 transition-all duration-200",
+            activeFormats.unorderedList && activeButtonStyle
           )}
           onClick={() => handleFormatting('unorderedList')}
           title="Unordered List"
@@ -314,11 +317,11 @@ export function RichTextEditor({
           <List className="h-4 w-4" />
         </Button>
         <Button 
-          variant={activeFormats.orderedList ? "default" : "ghost"}
+          variant="ghost" 
           size="sm" 
           className={cn(
-            "h-8 w-8 p-0",
-            activeFormats.orderedList && "bg-gray-200"
+            "h-8 w-8 p-0 transition-all duration-200",
+            activeFormats.orderedList && activeButtonStyle
           )}
           onClick={() => handleFormatting('orderedList')}
           title="Ordered List"
@@ -326,11 +329,11 @@ export function RichTextEditor({
           <ListOrdered className="h-4 w-4" />
         </Button>
         <Button 
-          variant={activeFormats.link ? "default" : "ghost"}
+          variant="ghost" 
           size="sm" 
           className={cn(
-            "h-8 w-8 p-0",
-            activeFormats.link && "bg-gray-200"
+            "h-8 w-8 p-0 transition-all duration-200",
+            activeFormats.link && activeButtonStyle
           )}
           onClick={() => handleFormatting('link')}
           title="Add Link"
@@ -340,18 +343,18 @@ export function RichTextEditor({
         <Button 
           variant="ghost"
           size="sm" 
-          className="h-8 w-8 p-0"
+          className="h-8 w-8 p-0 transition-all duration-200"
           onClick={() => handleFormatting('mention')}
           title="Mention User"
         >
           <AtSign className="h-4 w-4" />
         </Button>
         <Button 
-          variant={activeFormats.quote ? "default" : "ghost"}
+          variant="ghost" 
           size="sm" 
           className={cn(
-            "h-8 w-8 p-0",
-            activeFormats.quote && "bg-gray-200"
+            "h-8 w-8 p-0 transition-all duration-200",
+            activeFormats.quote && activeButtonStyle
           )}
           onClick={() => handleFormatting('quote')}
           title="Add Quote"
@@ -359,11 +362,11 @@ export function RichTextEditor({
           <Quote className="h-4 w-4" />
         </Button>
         <Button 
-          variant={activeFormats.code ? "default" : "ghost"}
+          variant="ghost" 
           size="sm" 
           className={cn(
-            "h-8 w-8 p-0",
-            activeFormats.code && "bg-gray-200"
+            "h-8 w-8 p-0 transition-all duration-200",
+            activeFormats.code && activeButtonStyle
           )}
           onClick={() => handleFormatting('code')}
           title="Code Block"
@@ -371,11 +374,11 @@ export function RichTextEditor({
           <CodeIcon className="h-4 w-4" />
         </Button>
         <Button 
-          variant={activeFormats.formula ? "default" : "ghost"}
+          variant="ghost" 
           size="sm" 
           className={cn(
-            "h-8 w-8 p-0",
-            activeFormats.formula && "bg-gray-200"
+            "h-8 w-8 p-0 transition-all duration-200",
+            activeFormats.formula && activeButtonStyle
           )}
           onClick={() => handleFormatting('formula')}
           title="Formula/Math"
@@ -385,7 +388,7 @@ export function RichTextEditor({
         <Button 
           variant="ghost"
           size="sm" 
-          className="h-8 w-8 p-0"
+          className="h-8 w-8 p-0 transition-all duration-200"
           onClick={() => handleFormatting('undo')}
           title="Undo"
         >
@@ -394,18 +397,18 @@ export function RichTextEditor({
         <Button 
           variant="ghost"
           size="sm" 
-          className="h-8 w-8 p-0"
+          className="h-8 w-8 p-0 transition-all duration-200"
           onClick={() => handleFormatting('redo')}
           title="Redo"
         >
           <Redo className="h-4 w-4" />
         </Button>
         <Button 
-          variant={activeFormats.heading1 ? "default" : "ghost"}
+          variant="ghost" 
           size="sm" 
           className={cn(
-            "h-8 w-8 p-0",
-            activeFormats.heading1 && "bg-gray-200"
+            "h-8 w-8 p-0 transition-all duration-200",
+            activeFormats.heading1 && activeButtonStyle
           )}
           onClick={() => handleFormatting('heading1')}
           title="Heading 1"
@@ -413,11 +416,11 @@ export function RichTextEditor({
           <Heading1 className="h-4 w-4" />
         </Button>
         <Button 
-          variant={activeFormats.heading2 ? "default" : "ghost"}
+          variant="ghost" 
           size="sm" 
           className={cn(
-            "h-8 w-8 p-0",
-            activeFormats.heading2 && "bg-gray-200"
+            "h-8 w-8 p-0 transition-all duration-200",
+            activeFormats.heading2 && activeButtonStyle
           )}
           onClick={() => handleFormatting('heading2')}
           title="Heading 2"
@@ -425,11 +428,11 @@ export function RichTextEditor({
           <Heading2 className="h-4 w-4" />
         </Button>
         <Button 
-          variant={activeFormats.heading3 ? "default" : "ghost"}
+          variant="ghost" 
           size="sm" 
           className={cn(
-            "h-8 w-8 p-0",
-            activeFormats.heading3 && "bg-gray-200"
+            "h-8 w-8 p-0 transition-all duration-200",
+            activeFormats.heading3 && activeButtonStyle
           )}
           onClick={() => handleFormatting('heading3')}
           title="Heading 3"
@@ -470,7 +473,7 @@ export function RichTextEditor({
         }
         
         blockquote {
-          border-left: 3px solid #cbd5e1;
+          border-left: 3px solid #6366f1;
           padding-left: 10px;
           margin: 10px 0;
           color: #475569;
@@ -503,8 +506,20 @@ export function RichTextEditor({
         }
         
         a {
-          color: #2563eb;
+          color: #4f46e5;
           text-decoration: underline;
+        }
+        
+        code {
+          background-color: #f1f1f1;
+          padding: 2px 4px;
+          border-radius: 3px;
+          font-family: monospace;
+        }
+        
+        .math-formula {
+          font-style: italic;
+          color: #6366f1;
         }
       `}</style>
     </div>
