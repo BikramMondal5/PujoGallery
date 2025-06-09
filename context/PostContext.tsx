@@ -14,6 +14,7 @@ export interface Post {
   content: string
   image?: string
   video?: string
+  type?: "blog" | "regular" // New field to differentiate post types
   likes: number
   comments: number
   shares: number

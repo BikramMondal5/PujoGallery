@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef } from "react"
-import { Bell, ImageIcon, MessageCircle, Search, Video, X, Loader2 } from "lucide-react"
+import { Bell, ImageIcon, MessageCircle, Search, Video, X, Loader2, Pencil, Bold, Italic, List, ListOrdered, Link2, AtSign, Quote, Code as CodeIcon, Sigma, Undo, Redo } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -25,8 +25,10 @@ export default function PujoGallery() {
   const [postText, setPostText] = useState("")
   const [mediaPreview, setMediaPreview] = useState<string | null>(null)
   const [mediaType, setMediaType] = useState<"image" | "video" | null>(null)
+  const [blogMode, setBlogMode] = useState(false) // New state for blog post mode
   const fileInputRef = useRef<HTMLInputElement>(null)
   const videoInputRef = useRef<HTMLInputElement>(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
   const isMobile = useMediaQuery("(max-width: 768px)")
   const isTablet = useMediaQuery("(max-width: 1024px)")
 
@@ -82,10 +84,96 @@ export default function PujoGallery() {
     if (videoInputRef.current) videoInputRef.current.value = ""
   }
 
+  // Toggle blog post mode
+  const toggleBlogMode = () => {
+    setBlogMode(!blogMode)
+    // If transitioning to blog mode, clear any media
+    if (!blogMode) {
+      setMediaPreview(null)
+      setMediaType(null)
+      if (fileInputRef.current) fileInputRef.current.value = ""
+      if (videoInputRef.current) videoInputRef.current.value = ""
+    }
+    
+    // Focus on the textarea after toggling blog mode
+    setTimeout(() => {
+      if (textareaRef.current) {
+        textareaRef.current.focus()
+      }
+    }, 0)
+  }
+  
+  // Format text functions
+  const formatText = (formatType: string) => {
+    if (!textareaRef.current) return
+    
+    const textarea = textareaRef.current
+    const start = textarea.selectionStart
+    const end = textarea.selectionEnd
+    const selectedText = postText.substring(start, end)
+    
+    let formattedText = ""
+    let cursorPos = 0
+    
+    switch (formatType) {
+      case 'bold':
+        formattedText = postText.substring(0, start) + `**${selectedText}**` + postText.substring(end)
+        cursorPos = end + 4
+        break
+      case 'italic':
+        formattedText = postText.substring(0, start) + `*${selectedText}*` + postText.substring(end)
+        cursorPos = end + 2
+        break
+      case 'unorderedList':
+        formattedText = postText.substring(0, start) + `- ${selectedText}` + postText.substring(end)
+        cursorPos = end + 2
+        break
+      case 'orderedList':
+        formattedText = postText.substring(0, start) + `1. ${selectedText}` + postText.substring(end)
+        cursorPos = end + 3
+        break
+      case 'link':
+        formattedText = postText.substring(0, start) + `[${selectedText}](url)` + postText.substring(end)
+        cursorPos = end + 7
+        break
+      case 'mention':
+        formattedText = postText.substring(0, start) + `@${selectedText}` + postText.substring(end)
+        cursorPos = end + 1
+        break
+      case 'quote':
+        formattedText = postText.substring(0, start) + `> ${selectedText}` + postText.substring(end)
+        cursorPos = end + 2
+        break
+      case 'code':
+        formattedText = postText.substring(0, start) + `\`${selectedText}\`` + postText.substring(end)
+        cursorPos = end + 2
+        break
+      case 'formula':
+        formattedText = postText.substring(0, start) + `$${selectedText}$` + postText.substring(end)
+        cursorPos = end + 2
+        break
+    }
+    
+    setPostText(formattedText)
+    
+    // Set cursor position after formatting
+    setTimeout(() => {
+      if (textareaRef.current) {
+        textareaRef.current.focus()
+        if (selectedText) {
+          textareaRef.current.setSelectionRange(start, cursorPos)
+        } else {
+          textareaRef.current.setSelectionRange(cursorPos, cursorPos)
+        }
+      }
+    }, 0)
+  }
+  
   // Handle Post Creation
   const handleCreatePost = () => {
     if (!postText.trim() && !mediaPreview) return
     
+    // If in blog mode, add post as a blog
     addPost({
       user: {
         name: "Current User",
@@ -95,18 +183,20 @@ export default function PujoGallery() {
       content: postText,
       ...(mediaType === "image" && mediaPreview ? { image: mediaPreview } : {}),
       ...(mediaType === "video" && mediaPreview ? { video: mediaPreview } : {}),
+      ...(blogMode ? { type: "blog" } : {}), // Add type: blog if in blog mode
     })
     
     // Reset form
     setPostText("")
     setMediaPreview(null)
     setMediaType(null)
+    setBlogMode(false)
     if (fileInputRef.current) fileInputRef.current.value = ""
     if (videoInputRef.current) videoInputRef.current.value = ""
     
     toast({
-      title: "Post created!",
-      description: "Your post has been published successfully",
+      title: blogMode ? "Blog post created!" : "Post created!",
+      description: blogMode ? "Your blog post has been published successfully" : "Your post has been published successfully",
     })
   }
 
@@ -156,14 +246,118 @@ export default function PujoGallery() {
               </Avatar>
               <div className="flex-1">
                 <Textarea
-                  placeholder="Share your Puja moment..."
-                  className="min-h-[80px] resize-none border-none p-0 focus-visible:ring-0"
+                  ref={textareaRef}
+                  placeholder={blogMode ? "Write your blog post here..." : "Share your Puja moment..."}
+                  className={`resize-none border-none p-0 focus-visible:ring-0 ${blogMode ? 'min-h-[200px]' : 'min-h-[80px]'}`}
                   value={postText}
                   onChange={(e) => setPostText(e.target.value)}
                 />
                 
-                {/* Media preview section */}
-                {mediaPreview && (
+                {/* Blog formatting toolbar */}
+                {blogMode && (
+                  <div className="mt-2 flex flex-wrap items-center gap-1 rounded-md border bg-gray-50 p-1">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="h-8 w-8 p-0" 
+                      onClick={() => formatText('bold')}
+                      title="Bold"
+                    >
+                      <Bold className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="h-8 w-8 p-0" 
+                      onClick={() => formatText('italic')}
+                      title="Italic"
+                    >
+                      <Italic className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="h-8 w-8 p-0" 
+                      onClick={() => formatText('unorderedList')}
+                      title="Unordered List"
+                    >
+                      <List className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="h-8 w-8 p-0" 
+                      onClick={() => formatText('orderedList')}
+                      title="Ordered List"
+                    >
+                      <ListOrdered className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="h-8 w-8 p-0" 
+                      onClick={() => formatText('link')}
+                      title="Add Link"
+                    >
+                      <Link2 className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="h-8 w-8 p-0" 
+                      onClick={() => formatText('mention')}
+                      title="Mention User"
+                    >
+                      <AtSign className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="h-8 w-8 p-0" 
+                      onClick={() => formatText('quote')}
+                      title="Add Quote"
+                    >
+                      <Quote className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="h-8 w-8 p-0" 
+                      onClick={() => formatText('code')}
+                      title="Code Block"
+                    >
+                      <CodeIcon className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="h-8 w-8 p-0" 
+                      onClick={() => formatText('formula')}
+                      title="Formula/Math"
+                    >
+                      <Sigma className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="h-8 w-8 p-0" 
+                      title="Undo"
+                    >
+                      <Undo className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="h-8 w-8 p-0" 
+                      title="Redo"
+                    >
+                      <Redo className="h-4 w-4" />
+                    </Button>
+                  </div>
+                )}
+                
+                {/* Media preview section - only show if not in blog mode */}
+                {!blogMode && mediaPreview && (
                   <div className="relative mt-3">
                     <Button 
                       variant="ghost" 
@@ -209,11 +403,20 @@ export default function PujoGallery() {
                 <div className="flex items-center justify-between">
                   <div className="flex gap-2">
                     <Button 
+                      variant={blogMode ? "default" : "ghost"}
+                      size="sm" 
+                      className={`${blogMode ? 'bg-[#1976d2] text-white' : 'text-gray-500 hover:text-[#1976d2]'}`}
+                      onClick={toggleBlogMode}
+                    >
+                      <Pencil className="mr-1 h-4 w-4" />
+                      Blog
+                    </Button>
+                    <Button 
                       variant="ghost" 
                       size="sm" 
                       className="text-gray-500 hover:text-[#1976d2]"
                       onClick={handleImageClick}
-                      disabled={isUploading}
+                      disabled={blogMode || isUploading}
                     >
                       <ImageIcon className="mr-1 h-4 w-4" />
                       Image
@@ -223,7 +426,7 @@ export default function PujoGallery() {
                       size="sm" 
                       className="text-gray-500 hover:text-[#1976d2]"
                       onClick={handleVideoClick}
-                      disabled={isUploading}
+                      disabled={blogMode || isUploading}
                     >
                       <Video className="mr-1 h-4 w-4" />
                       Video
@@ -240,7 +443,7 @@ export default function PujoGallery() {
                         Uploading...
                       </>
                     ) : (
-                      "Post"
+                      blogMode ? "Publish Blog" : "Post"
                     )}
                   </Button>
                 </div>

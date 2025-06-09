@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { BadgeCheck, MoreHorizontal, MessageCircle, Share2, ThumbsUp, Trash2, AlertTriangle } from "lucide-react"
+import { BadgeCheck, MoreHorizontal, MessageCircle, Share2, ThumbsUp, Trash2, AlertTriangle, Pencil } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
@@ -41,6 +41,9 @@ export function PostCard({ post }: { post: Post }) {
 
   // Check if this is the current user's post (in a real app this would check against user ID)
   const isOwnPost = post.user.name === "Current User" || post.isOwnPost
+  
+  // Check if this is a blog post
+  const isBlog = post.type === "blog"
 
   const handleLike = () => {
     likePost(post.id)
@@ -73,7 +76,7 @@ export function PostCard({ post }: { post: Post }) {
 
   return (
     <>
-      <Card className="overflow-hidden rounded-xl border shadow-sm">
+      <Card className={`overflow-hidden rounded-xl border shadow-sm ${isBlog ? 'border-[#1976d2]/30' : ''}`}>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4">
           <div className="flex items-center space-x-3">
             <Avatar>
@@ -85,7 +88,18 @@ export function PostCard({ post }: { post: Post }) {
                 <span className="font-semibold">{post.user.name}</span>
                 {post.user.verified && <BadgeCheck className="ml-1 h-4 w-4 text-[#1976d2]" />}
               </div>
-              <p className="text-xs text-gray-500">{post.timestamp}</p>
+              <div className="flex items-center gap-1">
+                <p className="text-xs text-gray-500">{post.timestamp}</p>
+                {isBlog && (
+                  <>
+                    <span className="text-xs text-gray-500">•</span>
+                    <div className="flex items-center rounded-full bg-blue-100 px-2 py-0.5">
+                      <Pencil className="mr-1 h-3 w-3 text-[#1976d2]" />
+                      <span className="text-xs font-medium text-[#1976d2]">Blog</span>
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
           </div>
           <DropdownMenu>
@@ -120,13 +134,27 @@ export function PostCard({ post }: { post: Post }) {
           </DropdownMenu>
         </CardHeader>
         <CardContent className="p-4 pt-0">
-          <p className="whitespace-pre-wrap text-sm">{post.content}</p>
-          {post.image && (
+          {isBlog ? (
+            <div className="space-y-3">
+              <h2 className="text-xl font-bold leading-tight text-gray-900">
+                {post.content.split('\n')[0]}
+              </h2>
+              {post.content.includes('\n') && (
+                <div className="whitespace-pre-wrap text-sm text-gray-700">
+                  {post.content.substring(post.content.indexOf('\n') + 1)}
+                </div>
+              )}
+            </div>
+          ) : (
+            <p className="whitespace-pre-wrap text-sm">{post.content}</p>
+          )}
+
+          {!isBlog && post.image && (
             <div className="mt-3 overflow-hidden rounded-lg">
               <img src={post.image} alt="Post image" className="h-auto w-full object-cover" />
             </div>
           )}
-          {post.video && (
+          {!isBlog && post.video && (
             <div className="mt-3 overflow-hidden rounded-lg">
               <video src={post.video} controls className="h-auto w-full" />
             </div>
