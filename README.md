@@ -36,19 +36,27 @@ To set up PujoGallery locally, follow these steps:
 3. **Install Dependencies**:
    Install the required packages using pnpm:
    ```bash
-   pnpm install
+   npm install
    ```
-
----
+4. **Package Installation Issue**:
+   In case `npm install` gives error
+   ```bash
+   npm install --legacy-peer-deps
+   ```
 
 ## 🚀 How to Use
 
 To start using PujoGallery, follow these steps:
 
 1. **Start the Development Server**:
-   Run the following command to start the development server:
+   Run the following command to start the server:
+   - For Developer mode
    ```bash
-   pnpm dev
+   npm run dev
+   ```
+   - For production
+   ```bash
+   npm run build npm start
    ```
 
 2. **Access the Application**:
