@@ -136,14 +136,9 @@ export function PostCard({ post }: { post: Post }) {
         <CardContent className="p-4 pt-0">
           {isBlog ? (
             <div className="space-y-3">
-              <h2 className="text-xl font-bold leading-tight text-gray-900">
-                {post.content.split('\n')[0]}
-              </h2>
-              {post.content.includes('\n') && (
-                <div className="whitespace-pre-wrap text-sm text-gray-700">
-                  {post.content.substring(post.content.indexOf('\n') + 1)}
-                </div>
-              )}
+              <div className="whitespace-pre-wrap text-sm text-gray-700">
+                {post.content}
+              </div>
             </div>
           ) : (
             <p className="whitespace-pre-wrap text-sm">{post.content}</p>

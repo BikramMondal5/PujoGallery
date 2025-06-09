@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef } from "react"
-import { Bell, ImageIcon, MessageCircle, Search, Video, X, Loader2, Pencil, Bold, Italic, List, ListOrdered, Link2, AtSign, Quote, Code as CodeIcon, Sigma, Undo, Redo } from "lucide-react"
+import { Bell, ImageIcon, MessageCircle, Search, Video, X, Loader2, Pencil } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -19,6 +19,7 @@ import { usePosts } from "@/context/PostContext"
 import { toast } from "@/hooks/use-toast"
 import { Toaster } from "@/components/ui/toaster"
 import { SidebarNavigation } from "@/components/sidebar-navigation"
+import { RichTextEditor } from "@/components/rich-text-editor"
 
 export default function PujoGallery() {
   const { posts, addPost, isUploading, uploadImage, uploadVideo } = usePosts()
@@ -152,6 +153,18 @@ export default function PujoGallery() {
         formattedText = postText.substring(0, start) + `$${selectedText}$` + postText.substring(end)
         cursorPos = end + 2
         break
+      case 'heading1':
+        formattedText = postText.substring(0, start) + `# ${selectedText}` + postText.substring(end)
+        cursorPos = end + 2
+        break
+      case 'heading2':
+        formattedText = postText.substring(0, start) + `## ${selectedText}` + postText.substring(end)
+        cursorPos = end + 3
+        break
+      case 'heading3':
+        formattedText = postText.substring(0, start) + `### ${selectedText}` + postText.substring(end)
+        cursorPos = end + 4
+        break
     }
     
     setPostText(formattedText)
@@ -245,115 +258,21 @@ export default function PujoGallery() {
                 <AvatarFallback>A</AvatarFallback>
               </Avatar>
               <div className="flex-1">
-                <Textarea
-                  ref={textareaRef}
-                  placeholder={blogMode ? "Write your blog post here..." : "Share your Puja moment..."}
-                  className={`resize-none border-none p-0 focus-visible:ring-0 ${blogMode ? 'min-h-[200px]' : 'min-h-[80px]'}`}
-                  value={postText}
-                  onChange={(e) => setPostText(e.target.value)}
-                />
-                
-                {/* Blog formatting toolbar */}
-                {blogMode && (
-                  <div className="mt-2 flex flex-wrap items-center gap-1 rounded-md border bg-gray-50 p-1">
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="h-8 w-8 p-0" 
-                      onClick={() => formatText('bold')}
-                      title="Bold"
-                    >
-                      <Bold className="h-4 w-4" />
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="h-8 w-8 p-0" 
-                      onClick={() => formatText('italic')}
-                      title="Italic"
-                    >
-                      <Italic className="h-4 w-4" />
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="h-8 w-8 p-0" 
-                      onClick={() => formatText('unorderedList')}
-                      title="Unordered List"
-                    >
-                      <List className="h-4 w-4" />
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="h-8 w-8 p-0" 
-                      onClick={() => formatText('orderedList')}
-                      title="Ordered List"
-                    >
-                      <ListOrdered className="h-4 w-4" />
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="h-8 w-8 p-0" 
-                      onClick={() => formatText('link')}
-                      title="Add Link"
-                    >
-                      <Link2 className="h-4 w-4" />
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="h-8 w-8 p-0" 
-                      onClick={() => formatText('mention')}
-                      title="Mention User"
-                    >
-                      <AtSign className="h-4 w-4" />
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="h-8 w-8 p-0" 
-                      onClick={() => formatText('quote')}
-                      title="Add Quote"
-                    >
-                      <Quote className="h-4 w-4" />
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="h-8 w-8 p-0" 
-                      onClick={() => formatText('code')}
-                      title="Code Block"
-                    >
-                      <CodeIcon className="h-4 w-4" />
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="h-8 w-8 p-0" 
-                      onClick={() => formatText('formula')}
-                      title="Formula/Math"
-                    >
-                      <Sigma className="h-4 w-4" />
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="h-8 w-8 p-0" 
-                      title="Undo"
-                    >
-                      <Undo className="h-4 w-4" />
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="h-8 w-8 p-0" 
-                      title="Redo"
-                    >
-                      <Redo className="h-4 w-4" />
-                    </Button>
-                  </div>
+                {blogMode ? (
+                  <RichTextEditor 
+                    value={postText}
+                    onChange={(value) => setPostText(value)}
+                    placeholder="Write your blog post here..."
+                    minHeight="200px"
+                  />
+                ) : (
+                  <Textarea
+                    ref={textareaRef}
+                    placeholder="Share your Puja moment..."
+                    className="resize-none border-none p-0 focus-visible:ring-0 min-h-[80px]"
+                    value={postText}
+                    onChange={(e) => setPostText(e.target.value)}
+                  />
                 )}
                 
                 {/* Media preview section - only show if not in blog mode */}
