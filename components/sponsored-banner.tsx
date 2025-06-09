@@ -51,7 +51,7 @@ export function SponsoredBanner() {
   return (
     <>
       <Card className="overflow-hidden">
-        <CardHeader className="bg-gradient-to-r from-[#c62828] to-[#f9a825] pb-2 text-white">
+        <CardHeader className="bg-gradient-to-r from-[#1976d2] to-[#42a5f5] pb-2 text-white">
           <CardTitle className="text-sm font-medium">Support Pujo Celebrations</CardTitle>
         </CardHeader>
         <CardContent className="p-4">
@@ -59,7 +59,7 @@ export function SponsoredBanner() {
             <p className="text-xs">Help fund local pandals and cultural events.</p>
             <div className="h-2 overflow-hidden rounded-full bg-gray-200">
               <div 
-                className="h-full bg-gradient-to-r from-[#c62828] to-[#f9a825]"
+                className="h-full bg-gradient-to-r from-[#1976d2] to-[#42a5f5]"
                 style={{ width: `${percentRaised}%` }}
               ></div>
             </div>
@@ -69,7 +69,7 @@ export function SponsoredBanner() {
             </div>
           </div>
           <Button 
-            className="w-full bg-[#c62828] text-xs hover:bg-[#b71c1c]"
+            className="w-full bg-[#1976d2] text-xs hover:bg-[#1565c0]"
             onClick={() => setIsDialogOpen(true)}
           >
             <Gift className="mr-1 h-4 w-4" />
@@ -108,7 +108,7 @@ export function SponsoredBanner() {
                   variant={donationAmount === String(amount) ? "default" : "outline"}
                   size="sm"
                   onClick={() => setDonationAmount(String(amount))}
-                  className={donationAmount === String(amount) ? "bg-[#c62828] hover:bg-[#b71c1c]" : ""}
+                  className={donationAmount === String(amount) ? "bg-[#1976d2] hover:bg-[#1565c0]" : ""}
                 >
                   ₹{amount}
                 </Button>
@@ -126,7 +126,7 @@ export function SponsoredBanner() {
               </Button>
               <Button 
                 type="submit" 
-                className="bg-[#c62828] hover:bg-[#b71c1c]" 
+                className="bg-[#1976d2] hover:bg-[#1565c0]" 
                 disabled={isSubmitting}
               >
                 {isSubmitting ? "Processing..." : "Donate"}

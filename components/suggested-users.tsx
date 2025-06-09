@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { BadgeCheck } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -23,6 +23,30 @@ export function SuggestedUsers() {
       { id: "3", name: "Vikram Sen", image: "hacker.jfif", verified: false, followed: false },
     ]
   )
+  
+  // Track toast notifications to display after state updates
+  const toastRef = useRef<{
+    userId: string;
+    followed: boolean;
+    userName: string;
+  } | null>(null)
+  
+  // Show toast after state update
+  useEffect(() => {
+    if (toastRef.current) {
+      const { followed, userName } = toastRef.current
+      
+      toast({
+        title: followed ? "User followed" : "User unfollowed",
+        description: followed 
+          ? `You are now following ${userName}` 
+          : `You have unfollowed ${userName}`,
+        duration: 3000,
+      })
+      
+      toastRef.current = null
+    }
+  }, [suggestedUsers])
 
   const handleFollow = (userId: string) => {
     setSuggestedUsers(prev => 
@@ -31,14 +55,12 @@ export function SuggestedUsers() {
           // Toggle follow status
           const newFollowStatus = !user.followed
           
-          // Show toast
-          toast({
-            title: newFollowStatus ? "User followed" : "User unfollowed",
-            description: newFollowStatus 
-              ? `You are now following ${user.name}` 
-              : `You have unfollowed ${user.name}`,
-            duration: 3000,
-          })
+          // Store toast info for the useEffect to display
+          toastRef.current = {
+            userId,
+            followed: newFollowStatus,
+            userName: user.name
+          }
           
           return { ...user, followed: newFollowStatus }
         }
@@ -62,20 +84,20 @@ export function SuggestedUsers() {
               </Avatar>
               <div className="flex items-center">
                 <span className="text-xs font-medium">{user.name}</span>
-                {user.verified && <BadgeCheck className="ml-1 h-3 w-3 text-[#c62828]" />}
+                {user.verified && <BadgeCheck className="ml-1 h-3 w-3 text-[#1976d2]" />}
               </div>
             </div>
             <Button 
               variant={user.followed ? "default" : "outline"} 
               size="sm" 
-              className={`h-7 w-16 text-xs ${user.followed ? "bg-[#c62828] hover:bg-[#b71c1c]" : "border-[#c62828] text-[#c62828] hover:bg-[#c62828]/10"}`}
+              className={`h-7 w-16 text-xs ${user.followed ? "bg-[#1976d2] hover:bg-[#1565c0]" : "border-[#1976d2] text-[#1976d2] hover:bg-[#1976d2]/10"}`}
               onClick={() => handleFollow(user.id)}
             >
               {user.followed ? "Following" : "Follow"}
             </Button>
           </div>
         ))}
-        <Button variant="ghost" size="sm" className="w-full text-xs text-[#c62828] hover:bg-[#c62828]/10">
+        <Button variant="ghost" size="sm" className="w-full text-xs text-[#1976d2] hover:bg-[#1976d2]/10">
           See More
         </Button>
       </CardContent>

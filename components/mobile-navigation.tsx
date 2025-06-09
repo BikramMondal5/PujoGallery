@@ -108,7 +108,7 @@ export function MobileNavigation() {
         </Button>
         <Button
           size="icon"
-          className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-[#c62828] to-[#f9a825] text-white shadow-lg"
+          className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-[#1976d2] to-[#42a5f5] text-white shadow-lg"
           onClick={() => setIsCreatePostOpen(true)}
         >
           <ImageIcon className="h-6 w-6" />
@@ -214,7 +214,7 @@ export function MobileNavigation() {
           </div>
           <DrawerFooter>
             <Button 
-              className="bg-[#c62828] hover:bg-[#b71c1c]"
+              className="bg-[#1976d2] hover:bg-[#1565c0]"
               disabled={(!postText.trim() && !mediaPreview) || isUploading}
               onClick={handleCreatePost}
             >

@@ -17,6 +17,7 @@ export interface Post {
   likes: number
   comments: number
   shares: number
+  isOwnPost?: boolean // Add this to track if post belongs to current user
   commentsList?: {
     id: string
     user: {
@@ -33,6 +34,7 @@ interface PostContextType {
   likePost: (id: string) => void
   addComment: (postId: string, comment: { user: { name: string; image: string }; text: string }) => void
   sharePost: (id: string) => void
+  deletePost: (id: string) => void // Add delete post function
   uploadImage: (file: File) => Promise<string>
   uploadVideo: (file: File) => Promise<string>
   isUploading: boolean
@@ -189,6 +191,11 @@ export function PostProvider({ children }: { children: ReactNode }) {
     )
   }
 
+  // Delete a post
+  const deletePost = (id: string) => {
+    setPosts(prevPosts => prevPosts.filter(post => post.id !== id))
+  }
+
   // Upload image (simulated)
   const uploadImage = async (file: File): Promise<string> => {
     setIsUploading(true)
@@ -229,6 +236,7 @@ export function PostProvider({ children }: { children: ReactNode }) {
     likePost,
     addComment,
     sharePost,
+    deletePost,
     uploadImage,
     uploadVideo,
     isUploading

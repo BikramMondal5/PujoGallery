@@ -144,7 +144,7 @@ export function SidebarNavigation() {
             variant={activeItem === item.label ? "default" : "ghost"} 
             className={cn(
               "justify-start gap-3",
-              activeItem === item.label && "bg-[#c62828] hover:bg-[#b71c1c]"
+              activeItem === item.label && "bg-[#1976d2] hover:bg-[#1565c0]"
             )}
             onClick={() => handleNavItemClick(item.label)}
           >
@@ -224,7 +224,7 @@ export function SidebarNavigation() {
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="text-gray-500 hover:text-[#c62828]"
+                  className="text-gray-500 hover:text-[#1976d2]"
                   onClick={handleImageClick}
                   disabled={isUploading}
                 >
@@ -234,7 +234,7 @@ export function SidebarNavigation() {
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="text-gray-500 hover:text-[#c62828]"
+                  className="text-gray-500 hover:text-[#1976d2]"
                   onClick={handleVideoClick}
                   disabled={isUploading}
                 >
@@ -243,10 +243,10 @@ export function SidebarNavigation() {
                 </Button>
               </div>
               <Button 
-                className="bg-[#c62828] hover:bg-[#b71c1c]" 
+                className="bg-[#1976d2] hover:bg-[#1565c0]" 
                 disabled={(!postText.trim() && !mediaPreview) || isUploading}
                 onClick={handleCreatePost}
-              >
+                >
                 {isUploading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

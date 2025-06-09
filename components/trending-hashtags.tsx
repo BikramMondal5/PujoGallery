@@ -67,7 +67,7 @@ export function TrendingHashtags() {
     <Card>
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center gap-1 text-sm font-medium">
-          <TrendingUp className="h-4 w-4 text-[#c62828]" />
+          <TrendingUp className="h-4 w-4 text-[#1976d2]" />
           Trending Hashtags
         </CardTitle>
       </CardHeader>
@@ -81,7 +81,7 @@ export function TrendingHashtags() {
             }`}
             onClick={() => handleTagClick(hashtag.tag)}
           >
-            <span className={`font-medium ${activeTag === hashtag.tag ? "text-[#c62828]" : "text-[#c62828]"}`}>
+            <span className={`font-medium ${activeTag === hashtag.tag ? "text-[#1976d2]" : "text-[#1976d2]"}`}>
               {hashtag.tag}
             </span>
             <span className="text-xs text-gray-500">{hashtag.posts}</span>

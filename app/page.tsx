@@ -111,14 +111,14 @@ export default function PujoGallery() {
   }
 
   return (
-    <div className="min-h-screen bg-[#fffdf7]">
+    <div className="min-h-screen bg-[#f7fafd]">
       <Toaster />
       {/* Top Navigation Bar */}
       <header className="sticky top-0 z-50 flex h-16 items-center justify-between border-b bg-white px-4 shadow-sm md:px-6">
         <div className="flex items-center">
           <div className="flex items-center">
-            <div className="mr-2 h-8 w-8 rounded-full bg-gradient-to-r from-[#c62828] to-[#f9a825]"></div>
-            <h1 className="hidden text-xl font-bold text-[#c62828] md:block">Pujo Gallery</h1>
+            <div className="mr-2 h-8 w-8 rounded-full bg-gradient-to-r from-[#1976d2] to-[#42a5f5]"></div>
+            <h1 className="hidden text-xl font-bold text-[#1976d2] md:block">Pujo Gallery</h1>
           </div>
         </div>
 
@@ -130,7 +130,7 @@ export default function PujoGallery() {
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon" className="relative">
             <Bell className="h-5 w-5" />
-            <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-[#c62828]"></span>
+            <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-[#1976d2]"></span>
             <span className="sr-only">Notifications</span>
           </Button>
           <Button variant="ghost" size="icon">
@@ -211,7 +211,7 @@ export default function PujoGallery() {
                     <Button 
                       variant="ghost" 
                       size="sm" 
-                      className="text-gray-500 hover:text-[#c62828]"
+                      className="text-gray-500 hover:text-[#1976d2]"
                       onClick={handleImageClick}
                       disabled={isUploading}
                     >
@@ -221,7 +221,7 @@ export default function PujoGallery() {
                     <Button 
                       variant="ghost" 
                       size="sm" 
-                      className="text-gray-500 hover:text-[#c62828]"
+                      className="text-gray-500 hover:text-[#1976d2]"
                       onClick={handleVideoClick}
                       disabled={isUploading}
                     >
@@ -230,7 +230,7 @@ export default function PujoGallery() {
                     </Button>
                   </div>
                   <Button 
-                    className="bg-[#c62828] hover:bg-[#b71c1c]" 
+                    className="bg-[#1976d2] hover:bg-[#1565c0]" 
                     disabled={(!postText.trim() && !mediaPreview) || isUploading}
                     onClick={handleCreatePost}
                   >
