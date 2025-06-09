@@ -18,9 +18,9 @@ interface SuggestedUser {
 export function SuggestedUsers() {
   const [suggestedUsers, setSuggestedUsers] = useState<SuggestedUser[]>(
     [
-      { id: "1", name: "Aditya Ghosh", image: "meera.jpg", verified: true, followed: false },
-      { id: "2", name: "Meera Chatterjee", image: "profile-pic.jpg", verified: false, followed: false },
-      { id: "3", name: "Vikram Sen", image: "hacker.jfif", verified: false, followed: false },
+      { id: "1", name: "Aditya Ghosh", image: "profile-pic.jpg", verified: true, followed: false },
+      { id: "2", name: "Meera Chatterjee", image: "meera.jpg", verified: false, followed: false },
+      { id: "3", name: "Bikram Mondal", image: "my-image.jfif", verified: false, followed: false },
     ]
   )
   
