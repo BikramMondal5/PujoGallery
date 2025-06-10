@@ -26,6 +26,25 @@ export function DonationModal({ open, onOpenChange }: DonationModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { verifyCurrentUser } = usePosts()
   
+  // Helper function to get badge info based on donation amount
+  const getBadgeInfo = (amount: number) => {
+    if (amount >= 1000) {
+      return { type: 'platinum', color: 'bg-gradient-to-r from-slate-300 to-slate-500', text: 'text-slate-700', name: 'Platinum' };
+    } else if (amount >= 700) {
+      return { type: 'diamond', color: 'bg-gradient-to-r from-blue-200 to-indigo-300', text: 'text-blue-700', name: 'Diamond' };
+    } else if (amount >= 500) {
+      return { type: 'gold', color: 'bg-gradient-to-r from-yellow-200 to-yellow-400', text: 'text-yellow-800', name: 'Gold' };
+    } else if (amount >= 300) {
+      return { type: 'silver', color: 'bg-gradient-to-r from-gray-200 to-gray-400', text: 'text-gray-700', name: 'Silver' };
+    } else if (amount >= 200) {
+      return { type: 'bronze', color: 'bg-gradient-to-r from-amber-600 to-amber-800', text: 'text-white', name: 'Bronze' };
+    } else {
+      return { type: 'standard', color: 'bg-blue-50', text: 'text-[#1976d2]', name: 'Standard' };
+    }
+  };
+  
+  const currentBadge = getBadgeInfo(parseFloat(donationAmount) || 0);
+  
   const handleDonate = (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
@@ -36,11 +55,13 @@ export function DonationModal({ open, onOpenChange }: DonationModalProps) {
     setTimeout(() => {
       if (amount >= 100) {
         // Verify the user if donation amount is sufficient
-        verifyCurrentUser()
+        verifyCurrentUser(amount)
+        
+        const badgeInfo = getBadgeInfo(amount);
         
         toast({
           title: "Thank you for your donation!",
-          description: "You've been verified with a badge on your profile.",
+          description: `You've been verified with a ${badgeInfo.name} badge on your profile.`,
           duration: 5000,
         })
         
@@ -71,10 +92,62 @@ export function DonationModal({ open, onOpenChange }: DonationModalProps) {
           </DialogDescription>
         </DialogHeader>
         
-        <div className="mt-4 flex items-center justify-center">
-          <div className="flex items-center gap-2 rounded-full bg-blue-50 px-4 py-2">
-            <BadgeCheck className="h-5 w-5 text-[#1976d2]" />
-            <span className="text-sm font-medium text-[#1976d2]">Verification Badge</span>
+        {/* Badge preview section */}
+        <div className="mt-4 flex flex-col items-center justify-center">
+          <div className={`flex items-center gap-2 rounded-full ${currentBadge.color} px-4 py-2`}>
+            <BadgeCheck className={`h-5 w-5 ${currentBadge.text}`} />
+            <span className={`text-sm font-medium ${currentBadge.text}`}>{currentBadge.name} Badge</span>
+          </div>
+          <p className="text-xs text-gray-500 mt-2">
+            Your current selection will earn you a {currentBadge.name} badge
+          </p>
+        </div>
+        
+        <div className="mt-4">
+          <h4 className="text-sm font-medium mb-2">Badge Tiers</h4>
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            <div className="bg-blue-50 p-2 rounded-md">
+              <div className="flex items-center gap-1">
+                <BadgeCheck className="h-3 w-3 text-[#1976d2]" />
+                <span className="font-medium text-[#1976d2]">Standard</span>
+              </div>
+              <p className="text-gray-600">₹100+</p>
+            </div>
+            <div className="bg-gradient-to-r from-amber-600 to-amber-800 p-2 rounded-md">
+              <div className="flex items-center gap-1">
+                <BadgeCheck className="h-3 w-3 text-white" />
+                <span className="font-medium text-white">Bronze</span>
+              </div>
+              <p className="text-gray-200">₹200+</p>
+            </div>
+            <div className="bg-gradient-to-r from-gray-200 to-gray-400 p-2 rounded-md">
+              <div className="flex items-center gap-1">
+                <BadgeCheck className="h-3 w-3 text-gray-700" />
+                <span className="font-medium text-gray-700">Silver</span>
+              </div>
+              <p className="text-gray-600">₹300+</p>
+            </div>
+            <div className="bg-gradient-to-r from-yellow-200 to-yellow-400 p-2 rounded-md">
+              <div className="flex items-center gap-1">
+                <BadgeCheck className="h-3 w-3 text-yellow-800" />
+                <span className="font-medium text-yellow-800">Gold</span>
+              </div>
+              <p className="text-yellow-800">₹500+</p>
+            </div>
+            <div className="bg-gradient-to-r from-blue-200 to-indigo-300 p-2 rounded-md">
+              <div className="flex items-center gap-1">
+                <BadgeCheck className="h-3 w-3 text-blue-700" />
+                <span className="font-medium text-blue-700">Diamond</span>
+              </div>
+              <p className="text-blue-700">₹700+</p>
+            </div>
+            <div className="bg-gradient-to-r from-slate-300 to-slate-500 p-2 rounded-md">
+              <div className="flex items-center gap-1">
+                <BadgeCheck className="h-3 w-3 text-slate-700" />
+                <span className="font-medium text-slate-700">Platinum</span>
+              </div>
+              <p className="text-slate-700">₹1000+</p>
+            </div>
           </div>
         </div>
         
@@ -92,8 +165,8 @@ export function DonationModal({ open, onOpenChange }: DonationModalProps) {
             <p className="text-xs text-gray-500">Minimum donation of ₹100 required for verification.</p>
           </div>
           
-          <div className="flex gap-2">
-            {[100, 200, 500, 1000].map((amount) => (
+          <div className="flex flex-wrap gap-2">
+            {[100, 200, 300, 500, 700, 1000].map((amount) => (
               <Button
                 key={amount}
                 type="button"

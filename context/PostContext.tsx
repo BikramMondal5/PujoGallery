@@ -9,6 +9,7 @@ export interface Post {
     name: string
     image: string
     verified?: boolean
+    badgeType?: 'standard' | 'bronze' | 'silver' | 'gold' | 'diamond' | 'platinum'
   }
   timestamp: string
   content: string
@@ -39,7 +40,7 @@ interface PostContextType {
   uploadImage: (file: File) => Promise<string>
   uploadVideo: (file: File) => Promise<string>
   isUploading: boolean
-  verifyCurrentUser: () => void // Add verification function
+  verifyCurrentUser: (amount: number) => void // Updated to accept donation amount
 }
 
 const PostContext = createContext<PostContextType | undefined>(undefined)
@@ -62,6 +63,7 @@ export function PostProvider({ children }: { children: ReactNode }) {
             name: "Bikram Mondal",
             image: "my-image.jfif",
             verified: true,
+            badgeType: 'gold'
           },
           timestamp: "2 hours ago",
           content: "Celebrating the first day of Durga Puja with my family! The pandal decorations this year are absolutely stunning. #DurgaPuja2025 #PujoVibes",
@@ -88,6 +90,7 @@ export function PostProvider({ children }: { children: ReactNode }) {
             name: "Priyanka Mukherjee",
             image: "cat.jpeg",
             verified: false,
+            badgeType: 'silver'
           },
           timestamp: "5 hours ago",
           content: "Traditional saree day! Ready for pandal hopping with friends. Durga Maa's blessings to everyone!",
@@ -101,6 +104,7 @@ export function PostProvider({ children }: { children: ReactNode }) {
             name: "Rakesh Adak",
             image: "rakesh-bhai.jpg",
             verified: true,
+            badgeType: 'diamond'
           },
           timestamp: "Yesterday",
           content: "The dhak beats are in the air! Can't wait for the evening aarti. Who else is visiting Ballygunge Puja today?",
@@ -199,16 +203,34 @@ export function PostProvider({ children }: { children: ReactNode }) {
   }
 
   // Verify current user (add verification badge to their posts)
-  const verifyCurrentUser = () => {
+  const verifyCurrentUser = (amount: number) => {
+    let badgeType: 'standard' | 'bronze' | 'silver' | 'gold' | 'diamond' | 'platinum' = 'standard';
+    
+    // Determine badge type based on donation amount
+    if (amount >= 1000) {
+      badgeType = 'platinum';
+    } else if (amount >= 700) {
+      badgeType = 'diamond';
+    } else if (amount >= 500) {
+      badgeType = 'gold';
+    } else if (amount >= 300) {
+      badgeType = 'silver';
+    } else if (amount >= 200) {
+      badgeType = 'bronze';
+    } else if (amount >= 100) {
+      badgeType = 'standard';
+    }
+    
     setPosts(prevPosts => 
       prevPosts.map(post => {
         // Check if this is the current user's post
-        if (post.user.name === "Current User") {
+        if (post.isOwnPost || post.user.name === "Current User") {
           return { 
             ...post, 
             user: {
               ...post.user,
-              verified: true
+              verified: true,
+              badgeType
             }
           }
         }
@@ -216,8 +238,9 @@ export function PostProvider({ children }: { children: ReactNode }) {
       })
     )
     
-    // Store verification status in localStorage
-    localStorage.setItem("userVerified", "true")
+    // Store verification status and badge type in localStorage
+    localStorage.setItem("userVerified", "true");
+    localStorage.setItem("userBadgeType", badgeType);
   }
 
   // Upload image (simulated)

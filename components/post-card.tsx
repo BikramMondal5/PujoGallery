@@ -33,6 +33,27 @@ export function PostCard({ post }: { post: Post }) {
   const [commentText, setCommentText] = useState("")
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   
+  // Helper function to get badge style based on badgeType
+  const getBadgeStyle = () => {
+    if (!post.user.verified) return '';
+    
+    switch (post.user.badgeType) {
+      case 'platinum':
+        return 'bg-gradient-to-r from-slate-300 to-slate-500 text-slate-700 rounded-full p-0.5';
+      case 'diamond':
+        return 'bg-gradient-to-r from-blue-200 to-indigo-300 text-blue-700 rounded-full p-0.5';
+      case 'gold':
+        return 'bg-gradient-to-r from-yellow-200 to-yellow-400 text-yellow-800 rounded-full p-0.5';
+      case 'silver':
+        return 'bg-gradient-to-r from-gray-200 to-gray-400 text-gray-700 rounded-full p-0.5';
+      case 'bronze':
+        return 'bg-gradient-to-r from-amber-600 to-amber-800 text-white rounded-full p-0.5';
+      case 'standard':
+      default:
+        return 'text-[#1976d2]';
+    }
+  };
+  
   // Check if post is liked on mount
   useEffect(() => {
     const isLiked = localStorage.getItem(`post-${post.id}-liked`) === "true"
@@ -86,7 +107,11 @@ export function PostCard({ post }: { post: Post }) {
             <div>
               <div className="flex items-center">
                 <span className="font-semibold">{post.user.name}</span>
-                {post.user.verified && <BadgeCheck className="ml-1 h-4 w-4 text-[#1976d2]" />}
+                {post.user.verified && (
+                  <div className={getBadgeStyle()}>
+                    <BadgeCheck className="ml-1 h-4 w-4" />
+                  </div>
+                )}
               </div>
               <div className="flex items-center gap-1">
                 <p className="text-xs text-gray-500">{post.timestamp}</p>
