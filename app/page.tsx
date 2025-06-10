@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef } from "react"
-import { Bell, ImageIcon, MessageCircle, Search, Video, X, Loader2, Pencil } from "lucide-react"
+import { Bell, ImageIcon, MessageCircle, Search, Video, X, Loader2, Pencil, Gift } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -13,13 +13,13 @@ import { MobileNavigation } from "@/components/mobile-navigation"
 import { PostCard } from "@/components/post-card"
 import { SuggestedUsers } from "@/components/suggested-users"
 import { TrendingHashtags } from "@/components/trending-hashtags"
-import { SponsoredBanner } from "@/components/sponsored-banner"
 import { UserDropdown } from "@/components/user-dropdown"
 import { usePosts } from "@/context/PostContext"
 import { toast } from "@/hooks/use-toast"
 import { Toaster } from "@/components/ui/toaster"
 import { SidebarNavigation } from "@/components/sidebar-navigation"
 import { RichTextEditor } from "@/components/rich-text-editor"
+import { DonationModal } from "@/components/donation-modal"
 
 export default function PujoGallery() {
   const { posts, addPost, isUploading, uploadImage, uploadVideo } = usePosts()
@@ -27,6 +27,7 @@ export default function PujoGallery() {
   const [mediaPreview, setMediaPreview] = useState<string | null>(null)
   const [mediaType, setMediaType] = useState<"image" | "video" | null>(null)
   const [blogMode, setBlogMode] = useState(false) // New state for blog post mode
+  const [isDonationModalOpen, setIsDonationModalOpen] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const videoInputRef = useRef<HTMLInputElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -231,6 +232,16 @@ export default function PujoGallery() {
         </div>
 
         <div className="flex items-center gap-2">
+          <Button 
+            variant="outline" 
+            size={isMobile ? "icon" : "sm"}
+            className="border-[#1976d2] text-[#1976d2] hover:bg-[#1976d2] hover:text-white"
+            onClick={() => setIsDonationModalOpen(true)}
+          >
+            <Gift className={`${!isMobile && "mr-2"} h-4 w-4`} />
+            {!isMobile && "Donate & Get Verified"}
+          </Button>
+          
           <Button variant="ghost" size="icon" className="relative">
             <Bell className="h-5 w-5" />
             <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-[#1976d2]"></span>
@@ -383,13 +394,18 @@ export default function PujoGallery() {
           <aside className="sticky top-20 hidden h-[calc(100vh-5rem)] w-72 flex-col gap-4 self-start overflow-auto lg:flex">
             <SuggestedUsers />
             <TrendingHashtags />
-            <SponsoredBanner />
           </aside>
         )}
       </div>
 
       {/* Mobile Navigation */}
       {isMobile && <MobileNavigation />}
+      
+      {/* Donation Modal */}
+      <DonationModal 
+        open={isDonationModalOpen} 
+        onOpenChange={setIsDonationModalOpen} 
+      />
     </div>
   )
 }

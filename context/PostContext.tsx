@@ -35,10 +35,11 @@ interface PostContextType {
   likePost: (id: string) => void
   addComment: (postId: string, comment: { user: { name: string; image: string }; text: string }) => void
   sharePost: (id: string) => void
-  deletePost: (id: string) => void // Add delete post function
+  deletePost: (id: string) => void
   uploadImage: (file: File) => Promise<string>
   uploadVideo: (file: File) => Promise<string>
   isUploading: boolean
+  verifyCurrentUser: () => void // Add verification function
 }
 
 const PostContext = createContext<PostContextType | undefined>(undefined)
@@ -197,6 +198,28 @@ export function PostProvider({ children }: { children: ReactNode }) {
     setPosts(prevPosts => prevPosts.filter(post => post.id !== id))
   }
 
+  // Verify current user (add verification badge to their posts)
+  const verifyCurrentUser = () => {
+    setPosts(prevPosts => 
+      prevPosts.map(post => {
+        // Check if this is the current user's post
+        if (post.user.name === "Current User") {
+          return { 
+            ...post, 
+            user: {
+              ...post.user,
+              verified: true
+            }
+          }
+        }
+        return post
+      })
+    )
+    
+    // Store verification status in localStorage
+    localStorage.setItem("userVerified", "true")
+  }
+
   // Upload image (simulated)
   const uploadImage = async (file: File): Promise<string> => {
     setIsUploading(true)
@@ -240,7 +263,8 @@ export function PostProvider({ children }: { children: ReactNode }) {
     deletePost,
     uploadImage,
     uploadVideo,
-    isUploading
+    isUploading,
+    verifyCurrentUser
   }
 
   return <PostContext.Provider value={value}>{children}</PostContext.Provider>
