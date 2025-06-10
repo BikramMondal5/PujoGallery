@@ -1,92 +1,95 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { TrendingUp } from "lucide-react"
-import { usePosts, Post } from "@/context/PostContext"
-import { useRouter } from "next/navigation"
+import { ExternalLink } from "lucide-react"
+import Image from "next/image"
 import { Button } from "./ui/button"
-import { toast } from "@/hooks/use-toast"
 
-// Helper function to extract hashtags from post content
-const extractHashtags = (posts: Post[]): { tag: string; count: number }[] => {
-  const hashtagMap = new Map<string, number>()
-  
-  posts.forEach(post => {
-    const regex = /#[\w\u0590-\u05ff\u0621-\u064a\u0660-\u0669]+/g
-    const hashtags = post.content.match(regex) || []
-    hashtags.forEach(tag => {
-      const count = hashtagMap.get(tag) || 0
-      hashtagMap.set(tag, count + 1)
-    })
-  })
-  
-  // Convert map to array and sort by count
-  return Array.from(hashtagMap.entries())
-    .map(([tag, count]) => ({ tag, count }))
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 5) // Take top 5
-    .map(item => ({
-      tag: item.tag,
-      count: item.count,
-      posts: `${item.count} ${item.count === 1 ? 'post' : 'posts'}`
-    }))
+type AdContent = {
+  id: string
+  title: string
+  description: string
+  imageUrl: string
+  linkUrl: string
 }
 
-export function TrendingHashtags() {
-  const { posts } = usePosts()
-  const router = useRouter()
-  const [activeTag, setActiveTag] = useState<string | null>(null)
-  
-  // Extract hashtags from posts or use defaults if no hashtags found
-  const extractedTags = extractHashtags(posts)
-  
-  const hashtags = extractedTags.length > 0 
-    ? extractedTags 
-    : [
-        { tag: "#Puja2025", count: 12500, posts: "12.5K posts" },
-        { tag: "#DurgaVibes", count: 8300, posts: "8.3K posts" },
-        { tag: "#PandalHopping", count: 5700, posts: "5.7K posts" },
-        { tag: "#BengaliTradition", count: 4200, posts: "4.2K posts" },
-        { tag: "#PujoFashion", count: 3900, posts: "3.9K posts" },
-      ]
+// Sample ad content - in a real app, this would come from an API
+const sampleAds: AdContent[] = [
+  {
+    id: "ad1",
+    title: "Durga Puja Festival Special",
+    description: "Exclusive discounts on traditional attire",
+    imageUrl: "/placeholder.jpg",
+    linkUrl: "https://example.com/festival-special"
+  },
+  {
+    id: "ad2",
+    title: "Pandal Photography Contest",
+    description: "Win prizes for your best shots",
+    imageUrl: "/placeholder.jpg", 
+    linkUrl: "https://example.com/photo-contest"
+  },
+  {
+    id: "ad3",
+    title: "Bengali Cuisine Festival",
+    description: "Explore the flavors of Bengal",
+    imageUrl: "/placeholder.jpg",
+    linkUrl: "https://example.com/cuisine-festival"
+  }
+]
 
-  const handleTagClick = (tag: string) => {
-    setActiveTag(tag === activeTag ? null : tag)
+export function TrendingHashtags() {
+  // Keeping the same component name for backward compatibility
+  const [currentAd, setCurrentAd] = useState<AdContent>(sampleAds[0])
+  
+  // Rotate ads every 30 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentAd(prevAd => {
+        const currentIndex = sampleAds.findIndex(ad => ad.id === prevAd.id)
+        const nextIndex = (currentIndex + 1) % sampleAds.length
+        return sampleAds[nextIndex]
+      })
+    }, 30000)
     
-    // In a real app, this would navigate to a filtered view of posts
-    // For now we'll just show a toast
-    toast({
-      title: "Hashtag selected",
-      description: `Viewing posts for ${tag}`,
-      duration: 3000,
-    })
+    return () => clearInterval(interval)
+  }, [])
+
+  const handleAdClick = () => {
+    // In a real app, you would track ad clicks here
+    console.log(`Ad clicked: ${currentAd.title}`)
+    // Could open in a new tab with window.open(currentAd.linkUrl, '_blank')
   }
 
   return (
-    <Card>
-      <CardHeader className="pb-2">
+    <Card className="overflow-hidden">
+      <CardHeader className="pb-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white">
         <CardTitle className="flex items-center gap-1 text-sm font-medium">
-          <TrendingUp className="h-4 w-4 text-[#1976d2]" />
-          Trending Hashtags
+          <ExternalLink className="h-4 w-4" />
+          Sponsored
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-2">
-        {hashtags.map((hashtag) => (
-          <Button
-            key={hashtag.tag}
-            variant="ghost"
-            className={`flex w-full items-center justify-between rounded-md px-2 py-1 text-xs hover:bg-gray-100 ${
-              activeTag === hashtag.tag ? "bg-gray-100" : ""
-            }`}
-            onClick={() => handleTagClick(hashtag.tag)}
+      <CardContent className="p-0">
+        <div className="relative w-full h-48">
+          <Image 
+            src={currentAd.imageUrl} 
+            alt={currentAd.title}
+            fill
+            className="object-cover"
+          />
+        </div>
+        <div className="p-4">
+          <h3 className="font-bold text-base">{currentAd.title}</h3>
+          <p className="text-sm text-gray-500 mt-2">{currentAd.description}</p>
+          <Button 
+            variant="link" 
+            className="text-blue-500 p-0 h-auto text-sm mt-3"
+            onClick={handleAdClick}
           >
-            <span className={`font-medium ${activeTag === hashtag.tag ? "text-[#1976d2]" : "text-[#1976d2]"}`}>
-              {hashtag.tag}
-            </span>
-            <span className="text-xs text-gray-500">{hashtag.posts}</span>
+            Learn more
           </Button>
-        ))}
+        </div>
       </CardContent>
     </Card>
   )

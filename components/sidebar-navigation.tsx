@@ -11,6 +11,7 @@ import { Separator } from "@/components/ui/separator"
 import { usePosts } from "@/context/PostContext"
 import { toast } from "@/hooks/use-toast"
 import { useMediaQuery } from "@/hooks/use-mobile"
+import { SidebarBanner } from "./sidebar-banner"
 
 interface NavItem {
   icon: React.ReactNode
@@ -152,6 +153,11 @@ export function SidebarNavigation() {
             {!isTablet && <span>{item.label}</span>}
           </Button>
         ))}
+        
+        {/* Spacer to push banner to bottom */}
+        <div className="flex-grow"></div>
+        
+        {!isTablet && <SidebarBanner />}
       </aside>
       
       {/* Create Post Dialog */}
