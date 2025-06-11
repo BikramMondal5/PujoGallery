@@ -190,8 +190,8 @@ export default function PujoGallery() {
     // If in blog mode, add post as a blog
     addPost({
       user: {
-        name: "Current User",
-        image: "hacker.jfif", // Using a placeholder user image
+        name: "Bikram Mondal",
+        image: "/my-image.jfif", // Using the user's profile image
         verified: true,
       },
       content: postText,
@@ -221,7 +221,11 @@ export default function PujoGallery() {
       <header className="sticky top-0 z-50 flex h-16 items-center justify-between border-b bg-white px-4 shadow-sm md:px-6">
         <div className="flex items-center">
           <div className="flex items-center">
-            <div className="mr-2 h-8 w-8 rounded-full bg-gradient-to-r from-[#1976d2] to-[#42a5f5]"></div>
+            <img 
+              src="/Logo.jpeg" 
+              alt="Pujo Gallery Logo" 
+              className="mr-2 h-10 w-auto rounded-full object-cover"
+            />
             <h1 className="hidden text-xl font-bold text-[#1976d2] md:block">Pujo Gallery</h1>
           </div>
         </div>
@@ -265,8 +269,8 @@ export default function PujoGallery() {
           <div className="rounded-xl border bg-white p-4 shadow-sm">
             <div className="flex gap-3">
               <Avatar>
-                <AvatarImage src="hacker.jfif" alt="User" />
-                <AvatarFallback>A</AvatarFallback>
+                <AvatarImage src="/my-image.jfif" alt="Bikram Mondal" />
+                <AvatarFallback>BM</AvatarFallback>
               </Avatar>
               <div className="flex-1">
                 {blogMode ? (

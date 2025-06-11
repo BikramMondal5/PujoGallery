@@ -63,7 +63,7 @@ export function PostCard({ post }: { post: Post }) {
   }, [post.id])
 
   // Check if this is the current user's post (in a real app this would check against user ID)
-  const isOwnPost = post.user.name === "Current User" || post.isOwnPost
+  const isOwnPost = post.user.name === "Bikram Mondal" || post.isOwnPost
   
   // Check if this is a blog post
   const isBlog = post.type === "blog"
@@ -86,7 +86,7 @@ export function PostCard({ post }: { post: Post }) {
     if (!commentText.trim()) return
 
     addComment(post.id, {
-      user: { name: "Current User", image: "/placeholder.svg" },
+      user: { name: "Bikram Mondal", image: "/my-image.jfif" },
       text: commentText,
     })
     setCommentText("")
@@ -147,24 +147,14 @@ export function PostCard({ post }: { post: Post }) {
             <DropdownMenuContent align="end">
               <DropdownMenuItem>Save post</DropdownMenuItem>
               <DropdownMenuItem>Follow {post.user.name}</DropdownMenuItem>
-              {isOwnPost && (
-                <>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem 
-                    className="text-red-600"
-                    onClick={() => setShowDeleteDialog(true)}
-                  >
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Delete post
-                  </DropdownMenuItem>
-                </>
-              )}
-              {!isOwnPost && (
-                <>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem className="text-red-600">Report post</DropdownMenuItem>
-                </>
-              )}
+              <DropdownMenuSeparator />
+              <DropdownMenuItem 
+                className="text-red-600"
+                onClick={() => setShowDeleteDialog(true)}
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                Delete post
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </CardHeader>

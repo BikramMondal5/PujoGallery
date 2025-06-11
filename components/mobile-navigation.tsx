@@ -74,8 +74,8 @@ export function MobileNavigation() {
     
     addPost({
       user: {
-        name: "Current User",
-        image: "hacker.jfif",
+        name: "Bikram Mondal",
+        image: "my-image.jfif",
         verified: true,
       },
       content: postText,

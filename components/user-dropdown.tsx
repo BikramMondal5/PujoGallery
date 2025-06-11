@@ -17,16 +17,16 @@ export function UserDropdown() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8">
-            <AvatarImage src="/placeholder.svg" alt="User" />
-            <AvatarFallback>U</AvatarFallback>
+            <AvatarImage src="/my-image.jfif" alt="Bikram Mondal" />
+            <AvatarFallback>BM</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">Arjun Das</p>
-            <p className="text-xs leading-none text-muted-foreground">arjun.das@example.com</p>
+            <p className="text-sm font-medium leading-none">Bikram Mondal</p>
+            <p className="text-xs leading-none text-muted-foreground">bikram.mondal@example.com</p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />

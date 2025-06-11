@@ -53,10 +53,26 @@ export function PostProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const savedPosts = localStorage.getItem("pujoGalleryPosts")
     if (savedPosts) {
-      setPosts(JSON.parse(savedPosts))
+      // Just parse the posts without special sorting
+      const parsedPosts = JSON.parse(savedPosts);
+      setPosts(parsedPosts);
     } else {
       // Set initial posts if none exist
       setPosts([
+        {
+          id: "2",
+          user: {
+            name: "Priyanka Mukherjee",
+            image: "cat.jpeg",
+            verified: false,
+            badgeType: 'silver'
+          },
+          timestamp: "5 hours ago",
+          content: "Traditional saree day! Ready for pandal hopping with friends. Durga Maa's blessings to everyone!",
+          likes: 87,
+          comments: 32,
+          shares: 3,
+        },
         {
           id: "1",
           user: {
@@ -83,20 +99,6 @@ export function PostProvider({ children }: { children: ReactNode }) {
               text: "The decorations look amazing! 🙏"
             }
           ]
-        },
-        {
-          id: "2",
-          user: {
-            name: "Priyanka Mukherjee",
-            image: "cat.jpeg",
-            verified: false,
-            badgeType: 'silver'
-          },
-          timestamp: "5 hours ago",
-          content: "Traditional saree day! Ready for pandal hopping with friends. Durga Maa's blessings to everyone!",
-          likes: 87,
-          comments: 32,
-          shares: 3,
         },
         {
           id: "3",
@@ -136,7 +138,10 @@ export function PostProvider({ children }: { children: ReactNode }) {
       commentsList: []
     }
     
-    setPosts(prevPosts => [newPost, ...prevPosts])
+    setPosts(prevPosts => {
+      // Add new post at the beginning (most recent first)
+      return [newPost, ...prevPosts];
+    })
   }
 
   // Like or unlike a post
@@ -224,7 +229,7 @@ export function PostProvider({ children }: { children: ReactNode }) {
     setPosts(prevPosts => 
       prevPosts.map(post => {
         // Check if this is the current user's post
-        if (post.isOwnPost || post.user.name === "Current User") {
+        if (post.isOwnPost || post.user.name === "Bikram Mondal") {
           return { 
             ...post, 
             user: {
