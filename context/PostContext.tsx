@@ -208,7 +208,7 @@ export function PostProvider({ children }: { children: ReactNode }) {
     
     // Determine badge type based on donation amount
     if (amount >= 1000) {
-      badgeType = 'platinum';  // Platinum - #E5E4E2 - Premium Soft Silver
+      badgeType = 'platinum';  // Platinum - #A0AEC0 - Cool Gray
     } else if (amount >= 700) {
       badgeType = 'diamond';   // Diamond - #00BFFF - Sparkling Sky Blue
     } else if (amount >= 500) {
@@ -218,7 +218,7 @@ export function PostProvider({ children }: { children: ReactNode }) {
     } else if (amount >= 200) {
       badgeType = 'bronze';    // Bronze - #CD7F32 - Classic Bronze
     } else {
-      badgeType = 'standard';  // Standard - #A0AEC0 - Cool Gray
+      badgeType = 'standard';  // Standard - #E5E4E2 - Soft Silver
     }
     
     setPosts(prevPosts => 

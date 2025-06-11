@@ -41,7 +41,7 @@ export function PostCard({ post }: { post: Post }) {
     
     switch (post.user.badgeType) {
       case 'platinum':
-        return 'text-[#E5E4E2] border-[#E5E4E2]';
+        return 'text-[#A0AEC0] border-[#A0AEC0]';
       case 'diamond':
         return 'text-[#00BFFF] border-[#00BFFF]';
       case 'gold':
@@ -52,7 +52,7 @@ export function PostCard({ post }: { post: Post }) {
         return 'text-[#CD7F32] border-[#CD7F32]';
       case 'standard':
       default:
-        return 'text-[#A0AEC0] border-[#A0AEC0]';
+        return 'text-[#E5E4E2] border-[#E5E4E2]';
     }
   };
   

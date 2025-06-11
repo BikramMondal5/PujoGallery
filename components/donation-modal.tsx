@@ -29,7 +29,7 @@ export function DonationModal({ open, onOpenChange }: DonationModalProps) {
   // Helper function to get badge info based on donation amount
   const getBadgeInfo = (amount: number) => {
     if (amount >= 1000) {
-      return { type: 'platinum', iconColor: 'text-[#E5E4E2]', name: 'Platinum' };
+      return { type: 'platinum', iconColor: 'text-[#A0AEC0]', name: 'Platinum' };
     } else if (amount >= 700) {
       return { type: 'diamond', iconColor: 'text-[#00BFFF]', name: 'Diamond' };
     } else if (amount >= 500) {
@@ -39,7 +39,7 @@ export function DonationModal({ open, onOpenChange }: DonationModalProps) {
     } else if (amount >= 200) {
       return { type: 'bronze', iconColor: 'text-[#CD7F32]', name: 'Bronze' };
     } else {
-      return { type: 'standard', iconColor: 'text-[#A0AEC0]', name: 'Standard' };
+      return { type: 'standard', iconColor: 'text-[#E5E4E2]', name: 'Standard' };
     }
   };
   
@@ -106,19 +106,19 @@ export function DonationModal({ open, onOpenChange }: DonationModalProps) {
         <div className="mt-4">
           <h4 className="text-sm font-medium mb-2">Badge Tiers</h4>
           <div className="grid grid-cols-2 gap-2 text-xs">
-            <div className="bg-[#A0AEC0] p-2 rounded-md">
+            <div className="bg-[#E5E4E2] p-2 rounded-md">
               <div className="flex items-center gap-1">
-                <BadgeCheck className="h-3 w-3 text-white" />
-                <span className="font-medium text-white">Standard</span>
+                <BadgeCheck className="h-3 w-3 text-gray-700" />
+                <span className="font-medium text-gray-700">Standard</span>
               </div>
-              <p className="text-gray-100">₹100+</p>
+              <p className="text-gray-700">₹100+</p>
             </div>
             <div className="bg-[#CD7F32] p-2 rounded-md">
               <div className="flex items-center gap-1">
                 <BadgeCheck className="h-3 w-3 text-white" />
                 <span className="font-medium text-white">Bronze</span>
               </div>
-              <p className="text-gray-100">₹200+</p>
+              <p className="text-white">₹200+</p>
             </div>
             <div className="bg-[#C0C0C0] p-2 rounded-md">
               <div className="flex items-center gap-1">
@@ -141,7 +141,7 @@ export function DonationModal({ open, onOpenChange }: DonationModalProps) {
               </div>
               <p className="text-white">₹700+</p>
             </div>
-            <div className="bg-[#E5E4E2] p-2 rounded-md">
+            <div className="bg-[#A0AEC0] p-2 rounded-md">
               <div className="flex items-center gap-1">
                 <BadgeCheck className="h-3 w-3 text-gray-700" />
                 <span className="font-medium text-gray-700">Platinum</span>
