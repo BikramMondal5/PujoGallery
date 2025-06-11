@@ -25,6 +25,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { toast } from "@/hooks/use-toast"
+import { ShareDialog } from "@/components/share-dialog"
 
 export function PostCard({ post }: { post: Post }) {
   const { likePost, addComment, sharePost, deletePost } = usePosts()
@@ -32,6 +33,7 @@ export function PostCard({ post }: { post: Post }) {
   const [showComments, setShowComments] = useState(false)
   const [commentText, setCommentText] = useState("")
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [showShareDialog, setShowShareDialog] = useState(false)
   
   // Helper function to get badge style based on badgeType
   const getBadgeStyle = () => {
@@ -39,18 +41,18 @@ export function PostCard({ post }: { post: Post }) {
     
     switch (post.user.badgeType) {
       case 'platinum':
-        return 'bg-gradient-to-r from-slate-300 to-slate-500 text-slate-700 rounded-full p-0.5';
+        return 'text-[#E5E4E2] border-[#E5E4E2]';
       case 'diamond':
-        return 'bg-gradient-to-r from-blue-200 to-indigo-300 text-blue-700 rounded-full p-0.5';
+        return 'text-[#00BFFF] border-[#00BFFF]';
       case 'gold':
-        return 'bg-gradient-to-r from-yellow-200 to-yellow-400 text-yellow-800 rounded-full p-0.5';
+        return 'text-[#FFD700] border-[#FFD700]';
       case 'silver':
-        return 'bg-gradient-to-r from-gray-200 to-gray-400 text-gray-700 rounded-full p-0.5';
+        return 'text-[#C0C0C0] border-[#C0C0C0]';
       case 'bronze':
-        return 'bg-gradient-to-r from-amber-600 to-amber-800 text-white rounded-full p-0.5';
+        return 'text-[#CD7F32] border-[#CD7F32]';
       case 'standard':
       default:
-        return 'text-[#1976d2]';
+        return 'text-[#A0AEC0] border-[#A0AEC0]';
     }
   };
   
@@ -68,7 +70,15 @@ export function PostCard({ post }: { post: Post }) {
 
   const handleLike = () => {
     likePost(post.id)
+    // Toggle the liked state
     setLiked(!liked)
+    
+    // Toggle the localStorage state
+    if (liked) {
+      localStorage.removeItem(`post-${post.id}-liked`)
+    } else {
+      localStorage.setItem(`post-${post.id}-liked`, "true")
+    }
   }
 
   const handleAddComment = (e: React.FormEvent) => {
@@ -83,7 +93,7 @@ export function PostCard({ post }: { post: Post }) {
   }
 
   const handleShare = () => {
-    sharePost(post.id)
+    setShowShareDialog(true)
   }
 
   const handleDeletePost = () => {
@@ -181,18 +191,6 @@ export function PostCard({ post }: { post: Post }) {
           )}
         </CardContent>
         <CardFooter className="flex flex-col p-0">
-          <div className="flex items-center justify-between border-t border-b p-2">
-            <div className="flex items-center gap-1 text-xs text-gray-500">
-              <ThumbsUp className="h-3 w-3 fill-[#1976d2] text-[#1976d2]" />
-              <span>{post.likes}</span>
-            </div>
-            <div className="flex gap-3 text-xs text-gray-500">
-              <button onClick={() => setShowComments(!showComments)} className="hover:underline">
-                {post.comments} comments
-              </button>
-              <span>{post.shares} shares</span>
-            </div>
-          </div>
           <div className="flex items-center justify-between p-1">
             <Button
               variant="ghost"
@@ -201,7 +199,8 @@ export function PostCard({ post }: { post: Post }) {
               onClick={handleLike}
             >
               <ThumbsUp className={`mr-1 h-4 w-4 ${liked ? "fill-[#1976d2]" : ""}`} />
-              Like
+              {liked ? 'Unlike' : 'Like'}
+              <span className="ml-1 text-xs">{post.likes}</span>
             </Button>
             <Button
               variant="ghost"
@@ -211,6 +210,7 @@ export function PostCard({ post }: { post: Post }) {
             >
               <MessageCircle className="mr-1 h-4 w-4" />
               Comment
+              <span className="ml-1 text-xs">{post.comments}</span>
             </Button>
             <Button
               variant="ghost"
@@ -220,6 +220,7 @@ export function PostCard({ post }: { post: Post }) {
             >
               <Share2 className="mr-1 h-4 w-4" />
               Share
+              <span className="ml-1 text-xs">{post.shares}</span>
             </Button>
           </div>
 
@@ -277,6 +278,13 @@ export function PostCard({ post }: { post: Post }) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Share Dialog */}
+      <ShareDialog 
+        post={post}
+        open={showShareDialog}
+        onOpenChange={setShowShareDialog}
+      />
     </>
   )
 }

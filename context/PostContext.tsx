@@ -144,14 +144,14 @@ export function PostProvider({ children }: { children: ReactNode }) {
     setPosts(prevPosts => 
       prevPosts.map(post => {
         if (post.id === id) {
-          // Check if user already liked this post (in a real app, we'd check against user ID)
+          // Check if user already liked this post
           const isLiked = localStorage.getItem(`post-${id}-liked`) === "true"
           
           if (isLiked) {
-            localStorage.removeItem(`post-${id}-liked`)
-            return { ...post, likes: post.likes - 1 }
+            // If already liked, remove like (-1)
+            return { ...post, likes: Math.max(0, post.likes - 1) }
           } else {
-            localStorage.setItem(`post-${id}-liked`, "true")
+            // If not liked yet, add like (+1)
             return { ...post, likes: post.likes + 1 }
           }
         }
@@ -208,17 +208,17 @@ export function PostProvider({ children }: { children: ReactNode }) {
     
     // Determine badge type based on donation amount
     if (amount >= 1000) {
-      badgeType = 'platinum';
+      badgeType = 'platinum';  // Platinum - #E5E4E2 - Premium Soft Silver
     } else if (amount >= 700) {
-      badgeType = 'diamond';
+      badgeType = 'diamond';   // Diamond - #00BFFF - Sparkling Sky Blue
     } else if (amount >= 500) {
-      badgeType = 'gold';
+      badgeType = 'gold';      // Gold - #FFD700 - Royal Gold
     } else if (amount >= 300) {
-      badgeType = 'silver';
+      badgeType = 'silver';    // Silver - #C0C0C0 - Elegant Silver
     } else if (amount >= 200) {
-      badgeType = 'bronze';
-    } else if (amount >= 100) {
-      badgeType = 'standard';
+      badgeType = 'bronze';    // Bronze - #CD7F32 - Classic Bronze
+    } else {
+      badgeType = 'standard';  // Standard - #A0AEC0 - Cool Gray
     }
     
     setPosts(prevPosts => 
