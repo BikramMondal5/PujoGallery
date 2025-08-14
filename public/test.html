@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Supabase Connection Test</title>
+  <!-- Import Supabase JS from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    button {
+      background-color: #4CAF50;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 2px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .result {
+      margin-top: 16px;
+      padding: 16px;
+      background-color: #f8f8f8;
+      border-radius: 4px;
+      white-space: pre-wrap;
+    }
+    .success {
+      color: green;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <h1>Supabase Connection Test</h1>
+  
+  <div class="card">
+    <h2>Connection Details</h2>
+    <p>URL: <code>https://ptyodzlexndntparjaet.supabase.co</code></p>
+    <p>Key: <code>[Hidden for security]</code></p>
+    <button id="testConnection">Test Connection</button>
+    <div id="connectionResult" class="result"></div>
+  </div>
+
+  <div class="card">
+    <h2>Posts Test</h2>
+    <button id="testPosts">Test Posts Table</button>
+    <div id="postsResult" class="result"></div>
+  </div>
+
+  <script>
+    // Initialize Supabase client
+    const supabaseUrl = 'https://ptyodzlexndntparjaet.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB0eW9kemxleG5kbnRwYXJqYWV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUwODM0NDQsImV4cCI6MjA3MDY1OTQ0NH0.Igvnydr6wwy2CqCeVQIDheV2jlQ-SlRSVQJKigdFd8I';
+    
+    // Initialize the client
+    let supabase;
+    try {
+      supabase = supabase.createClient(supabaseUrl, supabaseKey);
+      console.log('Supabase client initialized');
+    } catch (error) {
+      console.error('Error initializing Supabase client:', error);
+    }
+
+    // Test connection button
+    document.getElementById('testConnection').addEventListener('click', async () => {
+      const resultElement = document.getElementById('connectionResult');
+      resultElement.textContent = 'Testing connection...';
+      
+      try {
+        const { error } = await supabase.from('posts').select('count', { count: 'exact', head: true });
+        
+        if (error) {
+          resultElement.textContent = `Error: ${error.message}`;
+          resultElement.className = 'result error';
+        } else {
+          resultElement.textContent = 'Connection successful!';
+          resultElement.className = 'result success';
+        }
+      } catch (error) {
+        resultElement.textContent = `Error: ${error.message}`;
+        resultElement.className = 'result error';
+      }
+    });
+
+    // Test posts table button
+    document.getElementById('testPosts').addEventListener('click', async () => {
+      const resultElement = document.getElementById('postsResult');
+      resultElement.textContent = 'Testing posts table...';
+      
+      try {
+        const { data, error } = await supabase
+          .from('posts')
+          .select('*')
+          .limit(5);
+        
+        if (error) {
+          resultElement.textContent = `Error: ${error.message}`;
+          resultElement.className = 'result error';
+        } else {
+          resultElement.textContent = `Success! Found ${data.length} posts:\n\n${JSON.stringify(data, null, 2)}`;
+          resultElement.className = 'result success';
+        }
+      } catch (error) {
+        resultElement.textContent = `Error: ${error.message}`;
+        resultElement.className = 'result error';
+      }
+    });
+  </script>
+</body>
+</html>

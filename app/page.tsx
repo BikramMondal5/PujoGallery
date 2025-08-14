@@ -1,10 +1,11 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { Bell, ImageIcon, MessageCircle, Search, Video, X, Loader2, Pencil, Gift } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { ClientSearchInput } from "@/components/client-search-input"
 import { Separator } from "@/components/ui/separator"
 import { Textarea } from "@/components/ui/textarea"
 import { useMediaQuery } from "@/hooks/use-mobile"
@@ -20,6 +21,7 @@ import { Toaster } from "@/components/ui/toaster"
 import { SidebarNavigation } from "@/components/sidebar-navigation"
 import { RichTextEditor } from "@/components/rich-text-editor"
 import { DonationModal } from "@/components/donation-modal"
+import FormHydrationFixer from "@/components/form-hydration-fixer"
 
 export default function PujoGallery() {
   const { posts, addPost, isUploading, uploadImage, uploadVideo } = usePosts()
@@ -33,6 +35,24 @@ export default function PujoGallery() {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const isMobile = useMediaQuery("(max-width: 768px)")
   const isTablet = useMediaQuery("(max-width: 1024px)")
+  
+  // Use effect to remove fdprocessedid attributes after hydration
+  useEffect(() => {
+    const cleanup = () => {
+      const elements = document.querySelectorAll('[fdprocessedid]');
+      elements.forEach(el => {
+        el.removeAttribute('fdprocessedid');
+      });
+    };
+    
+    // Run cleanup after hydration
+    cleanup();
+    
+    // Also run periodically to catch any new attributes
+    const interval = setInterval(cleanup, 100);
+    
+    return () => clearInterval(interval);
+  }, []);
 
   // Handle Image Selection
   const handleImageClick = () => {
@@ -216,6 +236,7 @@ export default function PujoGallery() {
 
   return (
     <div className="min-h-screen bg-[#f7fafd]">
+      <FormHydrationFixer />
       <Toaster />
       {/* Top Navigation Bar */}
       <header className="sticky top-0 z-50 flex h-16 items-center justify-between border-b bg-white px-4 shadow-sm md:px-6">
@@ -230,9 +251,9 @@ export default function PujoGallery() {
           </div>
         </div>
 
-        <div className="relative mx-4 hidden flex-1 max-w-md md:block">
-          <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-          <Input className="pl-8" placeholder="Search moments, users, hashtags..." />
+        <div className="mx-4 hidden flex-1 max-w-md md:block">
+          {/* Replace with client-side only search input */}
+          <ClientSearchInput placeholder="Search moments, users, hashtags..." />
         </div>
 
         <div className="flex items-center gap-2">

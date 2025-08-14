@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import { PostProvider } from '@/context/PostContext'
+import { SuppressHydrationWarnings } from '@/components/suppress-hydration-warnings'
+import { ThemeProvider } from '@/components/theme-provider'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -14,11 +16,15 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body>
-        <PostProvider>
-          {children}
-        </PostProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body suppressHydrationWarning>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <SuppressHydrationWarnings>
+            <PostProvider>
+              {children}
+            </PostProvider>
+          </SuppressHydrationWarnings>
+        </ThemeProvider>
       </body>
     </html>
   )

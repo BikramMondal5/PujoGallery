@@ -1,33 +1,26 @@
 "use client"
 
 import { createContext, useContext, useState, ReactNode, useEffect } from "react"
+import { 
+  supabase,
+  fetchPosts, 
+  createPost as supabaseCreatePost, 
+  updatePostLikes, 
+  updatePostShares, 
+  deletePostById, 
+  addCommentToPost as supabaseAddComment,
+  fetchCommentsForPost,
+  uploadMedia,
+  PostType
+} from "@/src/supabase-client"
 
-// Define the Post type
-export interface Post {
-  id: string
-  user: {
-    name: string
-    image: string
-    verified?: boolean
-    badgeType?: 'standard' | 'bronze' | 'silver' | 'gold' | 'diamond' | 'platinum'
-  }
-  timestamp: string
-  content: string
-  image?: string
-  video?: string
-  type?: "blog" | "regular" // New field to differentiate post types
-  likes: number
-  comments: number
-  shares: number
-  isOwnPost?: boolean // Add this to track if post belongs to current user
-  commentsList?: {
-    id: string
-    user: {
-      name: string
-      image: string
-    }
-    text: string
-  }[]
+// Extend the PostType for our use with required fields
+export interface Post extends PostType {
+  id: string;
+  timestamp: string;
+  likes: number;
+  comments: number;
+  shares: number;
 }
 
 interface PostContextType {
@@ -48,167 +41,317 @@ const PostContext = createContext<PostContextType | undefined>(undefined)
 export function PostProvider({ children }: { children: ReactNode }) {
   const [posts, setPosts] = useState<Post[]>([])
   const [isUploading, setIsUploading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
-  // Load posts from localStorage on mount
+  // Load posts from Supabase on mount
   useEffect(() => {
-    const savedPosts = localStorage.getItem("pujoGalleryPosts")
-    if (savedPosts) {
-      // Just parse the posts without special sorting
-      const parsedPosts = JSON.parse(savedPosts);
-      setPosts(parsedPosts);
-    } else {
-      // Set initial posts if none exist
-      setPosts([
-        {
-          id: "2",
-          user: {
-            name: "Priyanka Mukherjee",
-            image: "cat.jpeg",
-            verified: false,
-            badgeType: 'silver'
-          },
-          timestamp: "5 hours ago",
-          content: "Traditional saree day! Ready for pandal hopping with friends. Durga Maa's blessings to everyone!",
-          likes: 87,
-          comments: 32,
-          shares: 3,
-        },
-        {
-          id: "1",
-          user: {
-            name: "Bikram Mondal",
-            image: "my-image.jfif",
-            verified: true,
-            badgeType: 'gold'
-          },
-          timestamp: "2 hours ago",
-          content: "Celebrating the first day of Durga Puja with my family! The pandal decorations this year are absolutely stunning. #DurgaPuja2025 #PujoVibes",
-          image: "ekdaliya.jpeg",
-          likes: 124,
-          comments: 18,
-          shares: 5,
-          commentsList: [
+    const loadPosts = async () => {
+      setIsLoading(true);
+      try {
+        const data = await fetchPosts();
+        
+        if (data) {
+          // Transform the data from Supabase format to our Post format
+          const formattedPosts: Post[] = data.map(item => ({
+            id: item.id,
+            user: {
+              name: item.user_name,
+              image: item.user_image,
+              verified: item.user_verified,
+              badgeType: item.user_badge_type
+            },
+            timestamp: new Date(item.created_at).toLocaleString(),
+            content: item.content,
+            image: item.image,
+            video: item.video,
+            type: item.type,
+            likes: item.likes,
+            comments: item.comments,
+            shares: item.shares,
+            isOwnPost: item.is_own_post,
+          }));
+          
+          setPosts(formattedPosts);
+          
+          // Load comments for each post
+          formattedPosts.forEach(async (post) => {
+            const comments = await fetchCommentsForPost(post.id);
+            
+            if (comments && comments.length > 0) {
+              // Transform comments to our format
+              const formattedComments = comments.map(comment => ({
+                id: comment.id,
+                user: {
+                  name: comment.user_name,
+                  image: comment.user_image
+                },
+                text: comment.text
+              }));
+              
+              setPosts(prev => 
+                prev.map(p => 
+                  p.id === post.id 
+                    ? { ...p, commentsList: formattedComments }
+                    : p
+                )
+              );
+            }
+          });
+        } else {
+          // If no posts in database, use fallback data
+          setPosts([
             {
-              id: "c1",
-              user: { name: "Riya Das", image: "/placeholder.svg" },
-              text: "Looking beautiful! Which pandal is this?"
+              id: "2",
+              user: {
+                name: "Priyanka Mukherjee",
+                image: "cat.jpeg",
+                verified: false,
+                badgeType: 'silver'
+              },
+              timestamp: "5 hours ago",
+              content: "Traditional saree day! Ready for pandal hopping with friends. Durga Maa's blessings to everyone!",
+              likes: 87,
+              comments: 32,
+              shares: 3,
             },
             {
-              id: "c2", 
-              user: { name: "Amit Roy", image: "/placeholder.svg" },
-              text: "The decorations look amazing! 🙏"
+              id: "1",
+              user: {
+                name: "Bikram Mondal",
+                image: "my-image.jfif",
+                verified: true,
+                badgeType: 'gold'
+              },
+              timestamp: "2 hours ago",
+              content: "Celebrating the first day of Durga Puja with my family! The pandal decorations this year are absolutely stunning. #DurgaPuja2025 #PujoVibes",
+              image: "ekdaliya.jpeg",
+              likes: 124,
+              comments: 18,
+              shares: 5,
+              commentsList: [
+                {
+                  id: "c1",
+                  user: { name: "Riya Das", image: "/placeholder.svg" },
+                  text: "Looking beautiful! Which pandal is this?"
+                },
+                {
+                  id: "c2", 
+                  user: { name: "Amit Roy", image: "/placeholder.svg" },
+                  text: "The decorations look amazing! 🙏"
+                }
+              ]
+            },
+            {
+              id: "3",
+              user: {
+                name: "Rakesh Adak",
+                image: "rakesh-bhai.jpg",
+                verified: true,
+                badgeType: 'diamond'
+              },
+              timestamp: "Yesterday",
+              content: "The dhak beats are in the air! Can't wait for the evening aarti. Who else is visiting Ballygunge Puja today?",
+              image: "Maa.jpeg",
+              likes: 215,
+              comments: 42,
+              shares: 12,
             }
-          ]
-        },
-        {
-          id: "3",
-          user: {
-            name: "Rakesh Adak",
-            image: "rakesh-bhai.jpg",
-            verified: true,
-            badgeType: 'diamond'
-          },
-          timestamp: "Yesterday",
-          content: "The dhak beats are in the air! Can't wait for the evening aarti. Who else is visiting Ballygunge Puja today?",
-          image: "Maa.jpeg",
-          likes: 215,
-          comments: 42,
-          shares: 12,
+          ]);
         }
-      ])
-    }
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    loadPosts();
   }, [])
 
-  // Save posts to localStorage whenever they change
-  useEffect(() => {
-    if (posts.length > 0) {
-      localStorage.setItem("pujoGalleryPosts", JSON.stringify(posts))
-    }
-  }, [posts])
-
   // Add a new post
-  const addPost = (post: Omit<Post, "id" | "timestamp" | "likes" | "comments" | "shares">) => {
-    const newPost: Post = {
-      ...post,
-      id: `post-${Date.now()}`,
-      timestamp: "Just now",
-      likes: 0,
-      comments: 0,
-      shares: 0,
-      commentsList: []
+  const addPost = async (post: Omit<Post, "id" | "timestamp" | "likes" | "comments" | "shares">) => {
+    try {
+      const postWithCounts = {
+        ...post,
+        likes: 0,
+        comments: 0,
+        shares: 0
+      };
+      
+      const newPostData = await supabaseCreatePost(postWithCounts);
+      
+      if (newPostData) {
+        const newPost: Post = {
+          id: newPostData.id,
+          user: {
+            name: newPostData.user_name,
+            image: newPostData.user_image,
+            verified: newPostData.user_verified,
+            badgeType: newPostData.user_badge_type,
+          },
+          timestamp: "Just now",
+          content: newPostData.content,
+          image: newPostData.image,
+          video: newPostData.video,
+          type: newPostData.type,
+          likes: 0,
+          comments: 0,
+          shares: 0,
+          isOwnPost: newPostData.is_own_post,
+          commentsList: []
+        };
+        
+        setPosts(prevPosts => {
+          // Add new post at the beginning (most recent first)
+          return [newPost, ...prevPosts];
+        });
+      }
+    } catch (error) {
+      console.error("Error adding post:", error);
     }
-    
-    setPosts(prevPosts => {
-      // Add new post at the beginning (most recent first)
-      return [newPost, ...prevPosts];
-    })
   }
 
   // Like or unlike a post
-  const likePost = (id: string) => {
+  const likePost = async (id: string) => {
+    // Find the current post
+    const currentPost = posts.find(post => post.id === id);
+    if (!currentPost) return;
+    
+    // Check if user already liked this post
+    const isLiked = localStorage.getItem(`post-${id}-liked`) === "true";
+    
+    // Calculate new likes count
+    const newLikesCount = isLiked
+      ? Math.max(0, currentPost.likes - 1)
+      : currentPost.likes + 1;
+    
+    // Update UI first for better responsiveness
     setPosts(prevPosts => 
       prevPosts.map(post => {
         if (post.id === id) {
-          // Check if user already liked this post
-          const isLiked = localStorage.getItem(`post-${id}-liked`) === "true"
-          
-          if (isLiked) {
-            // If already liked, remove like (-1)
-            return { ...post, likes: Math.max(0, post.likes - 1) }
-          } else {
-            // If not liked yet, add like (+1)
-            return { ...post, likes: post.likes + 1 }
-          }
+          return { ...post, likes: newLikesCount };
         }
-        return post
+        return post;
       })
-    )
+    );
+    
+    // Then update the database
+    try {
+      await updatePostLikes(id, newLikesCount);
+    } catch (error) {
+      console.error("Error updating post likes:", error);
+      
+      // Revert UI change on error
+      setPosts(prevPosts => 
+        prevPosts.map(post => {
+          if (post.id === id) {
+            return { ...post, likes: currentPost.likes };
+          }
+          return post;
+        })
+      );
+    }
   }
 
   // Add a comment to a post
-  const addComment = (postId: string, comment: { user: { name: string; image: string }; text: string }) => {
-    setPosts(prevPosts => 
-      prevPosts.map(post => {
-        if (post.id === postId) {
-          const newComment = {
-            id: `comment-${Date.now()}`,
-            ...comment
-          }
-          
-          const newCommentsList = post.commentsList 
-            ? [...post.commentsList, newComment] 
-            : [newComment]
-            
-          return { 
-            ...post, 
-            comments: post.comments + 1,
-            commentsList: newCommentsList
-          }
-        }
-        return post
-      })
-    )
+  const addComment = async (postId: string, comment: { user: { name: string; image: string }; text: string }) => {
+    // Find the current post
+    const currentPost = posts.find(post => post.id === postId);
+    if (!currentPost) return;
+    
+    try {
+      // Add comment to database
+      const commentData = await supabaseAddComment(
+        postId, 
+        comment, 
+        currentPost.comments
+      );
+      
+      if (commentData) {
+        const newComment = {
+          id: commentData.id,
+          user: {
+            name: commentData.user_name,
+            image: commentData.user_image
+          },
+          text: commentData.text
+        };
+        
+        // Update UI
+        setPosts(prevPosts => 
+          prevPosts.map(post => {
+            if (post.id === postId) {
+              const newCommentsList = post.commentsList 
+                ? [...post.commentsList, newComment] 
+                : [newComment];
+                
+              return { 
+                ...post, 
+                comments: post.comments + 1,
+                commentsList: newCommentsList
+              };
+            }
+            return post;
+          })
+        );
+      }
+    } catch (error) {
+      console.error("Error adding comment:", error);
+    }
   }
 
   // Share a post
-  const sharePost = (id: string) => {
+  const sharePost = async (id: string) => {
+    // Find the current post
+    const currentPost = posts.find(post => post.id === id);
+    if (!currentPost) return;
+    
+    const newSharesCount = currentPost.shares + 1;
+    
+    // Update UI first for better responsiveness
     setPosts(prevPosts => 
       prevPosts.map(post => {
         if (post.id === id) {
-          return { ...post, shares: post.shares + 1 }
+          return { ...post, shares: newSharesCount };
         }
-        return post
+        return post;
       })
-    )
+    );
+    
+    // Then update the database
+    try {
+      await updatePostShares(id, newSharesCount);
+    } catch (error) {
+      console.error("Error updating post shares:", error);
+      
+      // Revert UI change on error
+      setPosts(prevPosts => 
+        prevPosts.map(post => {
+          if (post.id === id) {
+            return { ...post, shares: currentPost.shares };
+          }
+          return post;
+        })
+      );
+    }
   }
 
   // Delete a post
-  const deletePost = (id: string) => {
-    setPosts(prevPosts => prevPosts.filter(post => post.id !== id))
+  const deletePost = async (id: string) => {
+    // Update UI first for better responsiveness
+    setPosts(prevPosts => prevPosts.filter(post => post.id !== id));
+    
+    // Then delete from database
+    try {
+      await deletePostById(id);
+    } catch (error) {
+      console.error("Error deleting post:", error);
+      // Note: We could reload posts from database here on error
+    }
   }
 
   // Verify current user (add verification badge to their posts)
-  const verifyCurrentUser = (amount: number) => {
+  const verifyCurrentUser = async (amount: number) => {
     let badgeType: 'standard' | 'bronze' | 'silver' | 'gold' | 'diamond' | 'platinum' = 'standard';
     
     // Determine badge type based on donation amount
@@ -226,6 +369,7 @@ export function PostProvider({ children }: { children: ReactNode }) {
       badgeType = 'standard';  // Standard - #E5E4E2 - Soft Silver
     }
     
+    // Update posts in the UI
     setPosts(prevPosts => 
       prevPosts.map(post => {
         // Check if this is the current user's post
@@ -241,45 +385,58 @@ export function PostProvider({ children }: { children: ReactNode }) {
         }
         return post
       })
-    )
+    );
     
-    // Store verification status and badge type in localStorage
-    localStorage.setItem("userVerified", "true");
-    localStorage.setItem("userBadgeType", badgeType);
+    try {
+      // Update all user's posts in the database
+      const { error } = await supabase
+        .from('posts')
+        .update({ 
+          user_verified: true,
+          user_badge_type: badgeType 
+        })
+        .or(`is_own_post.eq.true,user_name.eq.Bikram Mondal`);
+        
+      if (error) {
+        console.error('Error updating user verification:', error);
+      }
+      
+      // Store verification status and badge type in localStorage as a fallback
+      localStorage.setItem("userVerified", "true");
+      localStorage.setItem("userBadgeType", badgeType);
+    } catch (error) {
+      console.error('Error verifying user:', error);
+    }
   }
 
-  // Upload image (simulated)
+  // Upload image using Supabase storage
   const uploadImage = async (file: File): Promise<string> => {
-    setIsUploading(true)
+    setIsUploading(true);
     
-    // In a real app, we'd upload to a server. Here we're just creating a data URL
-    return new Promise((resolve) => {
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        setTimeout(() => {
-          setIsUploading(false)
-          resolve(e.target?.result as string)
-        }, 1500) // Simulate upload delay
-      }
-      reader.readAsDataURL(file)
-    })
+    try {
+      const imageUrl = await uploadMedia(file, 'images');
+      return imageUrl || '';
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      throw error;
+    } finally {
+      setIsUploading(false);
+    }
   }
 
-  // Upload video (simulated)
+  // Upload video using Supabase storage
   const uploadVideo = async (file: File): Promise<string> => {
-    setIsUploading(true)
+    setIsUploading(true);
     
-    // In a real app, we'd upload to a server. Here we're just creating a data URL
-    return new Promise((resolve) => {
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        setTimeout(() => {
-          setIsUploading(false)
-          resolve(e.target?.result as string)
-        }, 2000) // Simulate upload delay
-      }
-      reader.readAsDataURL(file)
-    })
+    try {
+      const videoUrl = await uploadMedia(file, 'videos');
+      return videoUrl || '';
+    } catch (error) {
+      console.error('Error uploading video:', error);
+      throw error;
+    } finally {
+      setIsUploading(false);
+    }
   }
 
   const value = {
